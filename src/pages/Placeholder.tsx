@@ -1,6 +1,6 @@
 import { PageHeader } from '@/components/common/PageHeader'
 
-type Props = { eyebrow: string; title: string; description: string; step: string }
+type Props = { eyebrow?: string; title: string; description: string; step: string }
 
 export function Placeholder({ eyebrow, title, description, step }: Props) {
   return (

@@ -21,20 +21,19 @@ export default function App() {
             <Route
               path="servers"
               element={
-                <Placeholder eyebrow="Compute" title="Servers" description="베어메탈 서버를 관리합니다." step="5" />
+                <Placeholder title="Servers" description="베어메탈 서버를 관리합니다." step="5" />
               }
             />
             <Route
               path="activity"
               element={
-                <Placeholder eyebrow="Compute" title="Activity" description="서버에서 일어난 모든 이벤트입니다." step="7" />
+                <Placeholder title="Activity" description="서버에서 일어난 모든 이벤트입니다." step="7" />
               }
             />
             <Route
               path="networks"
               element={
                 <ComingSoon
-                  eyebrow="Network"
                   title="Networks"
                   description="VLAN과 사설망으로 서버를 연결합니다."
                   icon={Network}
@@ -47,7 +46,6 @@ export default function App() {
               path="ssh-keys"
               element={
                 <ComingSoon
-                  eyebrow="Network"
                   title="SSH keys"
                   description="서버 접속에 쓸 공개키를 등록합니다."
                   icon={KeyRound}

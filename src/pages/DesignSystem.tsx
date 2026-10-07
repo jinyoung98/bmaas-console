@@ -1,5 +1,6 @@
 import { Inbox, LayoutGrid, List, Plus, RotateCw, Search, Trash2 } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
+import { BrickGrid } from '@/components/data/BrickGrid'
 import { EmptyState } from '@/components/data/EmptyState'
 import { KeyValueList } from '@/components/data/KeyValueList'
 import { Breadcrumb } from '@/components/layout/Breadcrumb'
@@ -11,6 +12,7 @@ import { StatusBadge, StatusDot } from '@/components/data/StatusDot'
 import { Eyebrow } from '@/components/common/Eyebrow'
 import { PageHeader } from '@/components/common/PageHeader'
 import { Panel, PanelBody, PanelHeader } from '@/components/layout/Panel'
+import { Section, SectionHeader } from '@/components/layout/Section'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Kbd } from '@/components/ui/Kbd'
@@ -18,7 +20,15 @@ import { SegmentedControl } from '@/components/ui/SegmentedControl'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { Tooltip } from '@/components/ui/Tooltip'
-import { STATUS_BG, STATUS_LABEL, STATUS_ORDER, type ServerStatus } from '@/lib/status'
+import { ActivityFeed } from '@/features/overview/ActivityFeed'
+import { FleetStatus } from '@/features/overview/FleetStatus'
+import { LocationsPanel, RACK_SIZE } from '@/features/overview/LocationsPanel'
+import { RecentServers } from '@/features/overview/RecentServers'
+import { STATUS_BG, STATUS_LABEL, STATUS_ORDER } from '@/lib/status'
+import { activity } from '@/mock/activity'
+import { regions } from '@/mock/regions'
+import { groupByRegion, recentlyUpdated, statusCounts } from '@/mock/selectors'
+import { servers } from '@/mock/servers'
 
 const surfaces = [
   ['bg', 'bg-bg'],
@@ -26,15 +36,43 @@ const surfaces = [
   ['raised', 'bg-raised'],
   ['sunken', 'bg-sunken'],
   ['accent', 'bg-accent'],
+  ['brand', 'bg-brand'],
   ['accent-subtle', 'bg-accent-subtle'],
 ]
 
-// Overview의 벽돌 그리드에서 쓸 모양을 미리 보여주는 샘플
-const brickSample: ServerStatus[] = Array.from({ length: 36 }, (_, i) =>
-  i === 30 ? 'error' : i === 27 ? 'warning' : i === 13 || i === 14 ? 'maintenance' : i % 9 === 4 ? 'available' : 'running',
-)
+// 샘플은 Overview와 같은 mock과 같은 컴포넌트를 쓴다. 이 페이지만을 위한 마크업은 두지 않는다
+const counts = statusCounts(servers)
+const recent = recentlyUpdated(servers, 6)
+const events = activity.slice(0, 5)
+const groups = groupByRegion(servers)
+const firstRegion = groups[0]
+const bricks = firstRegion.servers.map((s, i) => ({
+  id: s.id,
+  label: s.hostname,
+  status: s.status,
+  to: `/servers/${s.id}`,
+  rack: Math.floor(i / RACK_SIZE) + 1,
+  unit: (i % RACK_SIZE) + 1,
+  cpu: s.status === 'running' || s.status === 'warning' ? s.usage.cpu : undefined,
+}))
+// 상태별 벽돌 한 장씩. 범례처럼 쓰려고 상태마다 그 상태의 첫 서버를 고른다
+const legendBricks = STATUS_ORDER.flatMap((status, i) => {
+  const s = servers.find((x) => x.status === status)
+  return s ? [{ id: s.id, label: s.hostname, status, to: `/servers/${s.id}`, rack: 1, unit: i + 1 }] : []
+})
+const stackSegments = STATUS_ORDER.map((s) => ({ key: s, label: STATUS_LABEL[s], value: counts[s], className: STATUS_BG[s] }))
 
 const trend = [32, 36, 34, 41, 39, 47, 52, 49, 58, 55, 63, 61, 68, 64, 72]
+
+/** 토큰 → 컴포넌트 → 패턴 층을 나누는 제목 */
+function LayerHeader({ title, note }: { title: string; note: string }) {
+  return (
+    <header className="border-b bg-surface px-5 pb-5 pt-10 md:px-8">
+      <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
+      <p className="mt-1 text-sm text-ink-soft">{note}</p>
+    </header>
+  )
+}
 
 function Block({ title, note, children }: { title: string; note?: string; children: ReactNode }) {
   return (
@@ -45,6 +83,16 @@ function Block({ title, note, children }: { title: string; note?: string; childr
       </div>
       <div className="min-w-0">{children}</div>
     </section>
+  )
+}
+
+/** 변형 하나에 붙는 작은 이름표 */
+function Variant({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="space-y-2">
+      <Mono className="block text-xs text-ink-mute">{label}</Mono>
+      {children}
+    </div>
   )
 }
 
@@ -61,7 +109,12 @@ export default function DesignSystem() {
         description="브릭섬 브랜드에서 가져온 토큰과, 모든 화면이 조립되는 컴포넌트입니다."
       />
 
-      <Block title="Surface" note="bg → surface → raised 순으로 한 단계씩 올라옵니다. 구분은 그림자가 아니라 1px 선이 합니다.">
+      <LayerHeader title="Tokens" note="색, 표면, 상태색, 글자. 컴포넌트는 hex를 쓰지 않고 이 값만 참조합니다." />
+
+      <Block
+        title="Color & surface"
+        note="기본색은 초록이 아니라 먹색(ink)입니다. 초록은 로고(brand)와 Running 상태에만 나오고, Available은 파랑입니다. bg → surface → raised 순으로 한 단계씩 올라오며, 구분은 그림자가 아니라 1px 선이 합니다. 그림자는 떠 있는 레이어(툴팁·팝오버·메뉴)에만 예외로 씁니다."
+      >
         <div className="flex flex-wrap gap-3">
           {surfaces.map(([name, cls]) => (
             <div key={name} className="w-28">
@@ -72,30 +125,21 @@ export default function DesignSystem() {
         </div>
       </Block>
 
-      <Block title="Status" note="브랜드 그린과 겹치지 않도록 Running은 더 밝은 그린을 씁니다. 점, 배지, 벽돌에서만 사용합니다.">
-        <div className="space-y-5">
-          <ul className="flex flex-wrap gap-x-8 gap-y-3">
-            {STATUS_ORDER.map((s) => (
-              <li key={s} className="flex items-center gap-2 text-sm">
-                <StatusDot status={s} />
-                {STATUS_LABEL[s]}
-              </li>
-            ))}
-          </ul>
-          <div className="flex flex-wrap gap-2">
-            {STATUS_ORDER.map((s) => (
-              <StatusBadge key={s} status={s} />
-            ))}
-          </div>
-          <div className="flex flex-wrap gap-1">
-            {brickSample.map((s, i) => (
-              <span key={i} className={`size-5 rounded-[3px] ${STATUS_BG[s]}`} />
-            ))}
-          </div>
+      <Block
+        title="Status"
+        note="브랜드 그린과 겹치지 않도록 Running은 더 밝은 그린을 씁니다. 상태색은 점, 배지, 벽돌, 구성비 막대, 칩 스와치, 타임라인 아이콘과 상태 라벨에만 씁니다."
+      >
+        <div className="flex flex-wrap gap-3">
+          {STATUS_ORDER.map((s) => (
+            <div key={s} className="w-28">
+              <div className={`${STATUS_BG[s]} h-14 rounded-md`} />
+              <Mono className="mt-1.5 block text-xs text-ink-soft">st-{s}</Mono>
+            </div>
+          ))}
         </div>
       </Block>
 
-      <Block title="Typography" note="본문은 Pretendard, 서버가 말하는 값은 JetBrains Mono. 스케일은 12 / 13 / 14 / 16 / 20 / 24 / 32.">
+      <Block title="Typography" note="본문은 Pretendard, 서버가 말하는 값은 JetBrains Mono. 스케일은 12 / 13 / 14 / 16 / 20 / 24 / 32. 예외로 11px는 상태 라벨과 2단 셀의 보조줄(리전 id, CPU 모델), 단축키 표시에만 씁니다.">
         <div className="grid gap-8 md:grid-cols-2">
           <div className="space-y-3">
             <p className="text-3xl font-semibold tracking-tight">서버 48대</p>
@@ -116,6 +160,8 @@ export default function DesignSystem() {
           </div>
         </div>
       </Block>
+
+      <LayerHeader title="Components" note="단독으로 쓰이는 조각. 변형과 상태를 나란히 보여줍니다." />
 
       <Block title="Buttons" note="Primary는 화면당 하나. 위험한 동작만 danger를 씁니다.">
         <div className="space-y-4">
@@ -186,52 +232,86 @@ export default function DesignSystem() {
         </Tabs>
       </Block>
 
-      <Block title="Data display" note="수치는 항상 Mono. 막대는 평소 브랜드 그린이고 임계값을 넘으면 상태 색으로 바뀝니다.">
-        <div className="grid gap-5 lg:grid-cols-2">
-          <Panel>
-            <PanelHeader title="CPU utilization" description="최근 24시간" actions={<StatusBadge status="running" />} />
-            <PanelBody className="space-y-5">
-              <div className="flex items-end justify-between">
-                <Value value="72.4" unit="%" className="text-3xl font-semibold tracking-tight" />
-                <Sparkline data={trend} width={140} height={40} />
-              </div>
-              <div className="space-y-3">
-                {[
-                  ['normal', 42],
-                  ['warning', 81],
-                  ['critical', 94],
-                ].map(([k, v]) => (
-                  <div key={k} className="grid grid-cols-[72px_1fr_44px] items-center gap-3 text-xs">
-                    <span className="text-ink-mute">{k}</span>
-                    <Meter value={v as number} />
-                    <Value value={v as number} unit="%" className="text-right" />
-                  </div>
-                ))}
-              </div>
-            </PanelBody>
-          </Panel>
+      <Block title="StatusBadge" note="상태는 점(StatusDot)과 배지(StatusBadge) 두 가지로 씁니다. 배지는 24px, 상태색 12% 틴트에 테두리가 없습니다. Running 점은 천천히 숨쉽니다.">
+        <div className="space-y-5">
+          <Variant label="StatusDot">
+            <ul className="flex flex-wrap gap-x-8 gap-y-3">
+              {STATUS_ORDER.map((s) => (
+                <li key={s} className="flex items-center gap-2 text-sm">
+                  <StatusDot status={s} />
+                  {STATUS_LABEL[s]}
+                </li>
+              ))}
+            </ul>
+          </Variant>
+          <Variant label="StatusBadge">
+            <div className="flex flex-wrap gap-2">
+              {STATUS_ORDER.map((s) => (
+                <StatusBadge key={s} status={s} />
+              ))}
+            </div>
+          </Variant>
+        </div>
+      </Block>
 
-          <Panel>
-            <PanelHeader title="Fleet" description="상태별 서버 수" />
-            <PanelBody className="space-y-5">
-              <StackBar
-                segments={STATUS_ORDER.map((s, i) => ({
-                  key: s,
-                  label: STATUS_LABEL[s],
-                  value: [36, 7, 2, 2, 1][i],
-                  className: STATUS_BG[s],
-                }))}
-              />
-              <KeyValueList
-                items={[
-                  { label: 'Hostname', value: <Mono>bm-seoul-01</Mono> },
-                  { label: 'CPU', value: <Mono>AMD EPYC 9354 · 64 Core</Mono> },
-                  { label: 'Memory', value: <Value value={256} unit="GB" /> },
-                  { label: 'IP address', value: <Mono>10.20.1.11</Mono> },
-                ]}
-              />
-            </PanelBody>
-          </Panel>
+      <Block title="StackBar" note="전체 대비 구성비. 라운드는 바깥에만 두고 구간 사이 틈으로 나눕니다. 숫자를 넣으면 잘리지 않도록 구간 최소 폭이 6px에서 24px로 커집니다.">
+        <div className="space-y-6">
+          <Variant label="기본 · 8px">
+            <StackBar segments={stackSegments} />
+          </Variant>
+          <Variant label="showValues · 32px">
+            <StackBar showValues className="h-[32px] gap-[3px]" segments={stackSegments} />
+          </Variant>
+        </div>
+      </Block>
+
+      <Block title="BrickGrid" note="서버 한 대 = 16px 벽돌 한 장. 랙 8대 단위로 묶습니다. 벽돌에 올리면 1.5px outline 링과 함께 호스트명, 상태, 랙 위치, CPU를 툴팁으로 보여주고, 누르면 상세로 갑니다.">
+        <div className="space-y-6">
+          <Variant label="상태별 벽돌">
+            <BrickGrid bricks={legendBricks} />
+          </Variant>
+          <Variant label={`랙 묶음 · ${firstRegion.region.id}`}>
+            <BrickGrid bricks={bricks} />
+          </Variant>
+        </div>
+      </Block>
+
+      <Block title="Meter" note="사용률 막대. 평소 먹색(accent)이고 75%를 넘으면 warning, 90%를 넘으면 error 색으로 바뀝니다. alert를 끄면 값과 상관없이 먹색입니다.">
+        <div className="max-w-md space-y-3">
+          {(
+            [
+              ['42%', 42, true],
+              ['81%', 81, true],
+              ['94%', 94, true],
+              ['94% · alert off', 94, false],
+            ] as const
+          ).map(([k, v, alert]) => (
+            <div key={k} className="grid grid-cols-[112px_1fr_44px] items-center gap-3 text-xs">
+              <Mono className="text-ink-mute">{k}</Mono>
+              <Meter value={v} alert={alert} />
+              <Value value={v} unit="%" className="text-right" />
+            </div>
+          ))}
+        </div>
+      </Block>
+
+      <Block title="Value & Sparkline" note="수치는 항상 Mono(Value)이고 단위는 한 단계 흐립니다. Sparkline은 축 없이 추세만 보여줍니다.">
+        <div className="flex flex-wrap items-end gap-10">
+          <Value value="72.4" unit="%" className="text-3xl font-semibold tracking-tight" />
+          <Sparkline data={trend} width={140} height={40} />
+        </div>
+      </Block>
+
+      <Block title="KeyValueList" note="상세 화면의 사양 목록. 라벨은 흐리게, 값은 Mono로.">
+        <div className="max-w-md">
+          <KeyValueList
+            items={[
+              { label: 'Hostname', value: <Mono>bm-seoul-01</Mono> },
+              { label: 'CPU', value: <Mono>AMD EPYC 9354 · 64 Core</Mono> },
+              { label: 'Memory', value: <Value value={256} unit="GB" /> },
+              { label: 'IP address', value: <Mono>10.20.1.11</Mono> },
+            ]}
+          />
         </div>
       </Block>
 
@@ -254,6 +334,43 @@ export default function DesignSystem() {
             <Skeleton className="h-3.5 w-40" />
             <Skeleton className="h-3 w-64" />
           </div>
+        </div>
+      </Block>
+      <LayerHeader title="Patterns" note="컴포넌트를 조합한 사용 예. Overview에 실제로 쓰이는 컴포넌트를 같은 데이터로 그립니다." />
+
+      <Block
+        title="Panel vs Section"
+        note="Panel + PanelHeader / Section + SectionHeader. Panel은 제목줄이 있는 선 박스로, 표와 차트처럼 구조가 있는 데이터를 담습니다. Section은 박스 없이 페이지 위에 바로 놓이는 요약이나 목록입니다. 모든 영역이 같은 박스로 보이지 않게 해서 중요도를 나눕니다."
+      >
+        <div className="grid gap-5 lg:grid-cols-2">
+          <Panel>
+            <PanelHeader title="Panel" description="표, 차트" />
+            <PanelBody className="text-sm text-ink-soft">Recent servers, Utilization, Locations</PanelBody>
+          </Panel>
+          <Section className="border-t pt-4">
+            <SectionHeader title="Section" />
+            <p className="mt-4 text-sm text-ink-soft">Fleet status, Recent activity</p>
+          </Section>
+        </div>
+      </Block>
+
+      <Block title="Fleet status" note="Section + 큰 숫자(Value) + StackBar(showValues) + 칩 범례. 칩은 상태별 서버 목록 필터로 갑니다.">
+        <FleetStatus counts={counts} regionCount={regions.length} />
+      </Block>
+
+      <Block title="Locations" note="Panel + 리전 헤더 + BrickGrid + Meter. 리전마다 벽돌로 서버 배치를, Meter로 CPU 평균을 보여줍니다.">
+        <div className="xl:max-w-[360px]">
+          <LocationsPanel groups={groups} />
+        </div>
+      </Block>
+
+      <Block title="Row card table" note="Panel + StatusBadge + Mono 2단 셀. 행마다 선 박스를 둔 표. 행에 올리면 화살표가 움직이고 누르면 상세로 갑니다.">
+        <RecentServers servers={recent} />
+      </Block>
+
+      <Block title="Timeline" note="Section + 틴트 링 상태 아이콘 + 레일. 호스트명 / 설명 / 상태 · 리전 · 시간의 3줄.">
+        <div className="max-w-[360px]">
+          <ActivityFeed events={events} />
         </div>
       </Block>
     </>

@@ -16,7 +16,7 @@ export function PageHeader({ eyebrow, breadcrumb, title, description, actions }:
     <div className="flex flex-col gap-4 border-b px-5 pb-6 pt-7 sm:flex-row sm:items-end sm:justify-between sm:gap-6 md:px-8 md:pt-8">
       <div className="min-w-0">
         {breadcrumb ? <Breadcrumb items={breadcrumb} /> : eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight">{title}</h1>
+        <h1 className={(breadcrumb || eyebrow ? 'mt-2 ' : '') + 'text-2xl font-semibold tracking-tight'}>{title}</h1>
         {description && <p className="mt-1.5 max-w-xl text-sm text-ink-soft">{description}</p>}
       </div>
       {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}

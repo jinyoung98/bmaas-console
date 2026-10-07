@@ -1,5 +1,5 @@
 import { cn } from '@/lib/cn'
-import { STATUS_BG, STATUS_LABEL, STATUS_SOFT, type ServerStatus } from '@/lib/status'
+import { STATUS_BG, STATUS_LABEL, STATUS_BADGE, type ServerStatus } from '@/lib/status'
 
 type DotProps = { status: ServerStatus; className?: string }
 
@@ -15,16 +15,17 @@ export function StatusDot({ status, className }: DotProps) {
   )
 }
 
+/** 24px 틴트 배지. 루트 폰트가 14px라 rem 대신 px로 치수를 고정한다 */
 export function StatusBadge({ status, className }: DotProps) {
   return (
     <span
       className={cn(
-        'inline-flex h-5 items-center gap-1.5 rounded-sm border px-1.5 text-xs font-medium',
-        STATUS_SOFT[status],
+        'inline-flex h-[24px] items-center gap-[6px] rounded-sm px-[8px] text-xs font-medium',
+        STATUS_BADGE[status],
         className,
       )}
     >
-      <span className={cn('size-1.5 rounded-full', STATUS_BG[status])} />
+      <span className={cn('size-[6px] rounded-full', STATUS_BG[status])} />
       {STATUS_LABEL[status]}
     </span>
   )

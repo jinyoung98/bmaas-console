@@ -28,10 +28,11 @@ export const STATUS_TEXT: Record<ServerStatus, string> = {
   error: 'text-st-error',
 }
 
-export const STATUS_SOFT: Record<ServerStatus, string> = {
-  running: 'bg-st-running/10 text-st-running border-st-running/25',
-  available: 'bg-st-available/10 text-st-available border-st-available/25',
-  maintenance: 'bg-st-maintenance/10 text-st-maintenance border-st-maintenance/25',
-  warning: 'bg-st-warning/10 text-st-warning border-st-warning/25',
-  error: 'bg-st-error/10 text-st-error border-st-error/25',
+/** 배지 배경은 상태색 12%, 글자는 상태색. 테두리 없이 틴트만으로 구분한다 */
+export const STATUS_BADGE: Record<ServerStatus, string> = {
+  running: 'bg-st-running/12 text-st-running',
+  available: 'bg-st-available/12 text-st-available',
+  maintenance: 'bg-st-maintenance/12 text-st-maintenance',
+  warning: 'bg-st-warning/12 text-st-warning',
+  error: 'bg-st-error/12 text-st-error',
 }

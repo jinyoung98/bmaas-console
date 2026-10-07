@@ -6,6 +6,7 @@ export type ChartPoint = { t: number; v: number }
 
 type Props = {
   data: ChartPoint[]
+  /** 생략하면 부모 크기를 가득 채운다. 부모에 높이가 있어야 한다 */
   height?: number
   /** 값 축 범위. 퍼센트 지표는 [0, 100]으로 고정해서 모양이 과장되지 않게 한다 */
   domain?: [number, number | 'auto']
@@ -19,11 +20,11 @@ type Props = {
 const AXIS_TICK = { fill: 'var(--ink-mute)', fontSize: 11, fontFamily: 'var(--font-mono)' }
 
 /** Recharts를 토큰 색으로 재스타일한 단색 영역 차트 */
-export function AreaChart({ data, height = 280, domain = [0, 100], unit, formatTick, formatTooltipTime, formatAxis }: Props) {
+export function AreaChart({ data, height, domain = [0, 100], unit, formatTick, formatTooltipTime, formatAxis }: Props) {
   const id = useId()
 
   return (
-    <div style={{ height }} className="w-full">
+    <div style={height ? { height } : undefined} className={height ? 'w-full' : 'size-full'}>
       <ResponsiveContainer width="100%" height="100%">
         <RAreaChart data={data} margin={{ top: 8, right: 32, bottom: 0, left: -12 }}>
           <defs>

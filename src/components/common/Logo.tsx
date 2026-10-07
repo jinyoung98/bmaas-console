@@ -17,7 +17,7 @@ type Props = { className?: string; /** 좁은 화면에서는 마크만 보여�
 
 export function Logo({ className, collapsible }: Props) {
   return (
-    <div className={cn('flex items-center gap-2.5 text-accent', className)}>
+    <div className={cn('flex items-center gap-2.5 text-brand', className)}>
       <Mark />
       <span className={cn('font-brand text-[19px] leading-none tracking-wide text-ink', collapsible && 'max-sm:hidden')}>
         BRICKSUM

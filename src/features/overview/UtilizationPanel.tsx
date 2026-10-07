@@ -73,15 +73,18 @@ export function UtilizationPanel({ means }: Props) {
         })}
       </div>
 
-      <div className="flex-1 px-4 pb-4 pt-5">
-        <AreaChart
-          data={data}
-          unit={info.unit}
-          domain={isPercent ? [0, 100] : [0, 'auto']}
-          formatAxis={isPercent ? (v) => `${v}%` : undefined}
-          formatTick={(t) => formatClock(t, range)}
-          formatTooltipTime={(t) => formatClock(t, range, true)}
-        />
+      {/* 옆 패널(Locations)이 더 길면 차트가 그만큼 늘어나서 두 패널의 바닥이 맞는다 */}
+      <div className="relative min-h-[300px] flex-1">
+        <div className="absolute inset-x-4 bottom-4 top-5">
+          <AreaChart
+            data={data}
+            unit={info.unit}
+            domain={isPercent ? [0, 100] : [0, 'auto']}
+            formatAxis={isPercent ? (v) => `${v}%` : undefined}
+            formatTick={(t) => formatClock(t, range)}
+            formatTooltipTime={(t) => formatClock(t, range, true)}
+          />
+        </div>
       </div>
     </Panel>
   )
