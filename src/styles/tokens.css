@@ -1,0 +1,110 @@
+/*
+  디자인 토큰. 값의 출처는 bricksum.com(라이트)과 kiln.bricksum.com(다크).
+  컴포넌트는 hex를 직접 쓰지 않고 이 변수만 참조한다.
+*/
+
+:root {
+  /* surface: bg < surface 순으로 한 단계씩 올라온다 */
+  --bg: #f0f3ef;
+  --surface: #f7f9f6;
+  --surface-raised: #fcfdfb;
+  --surface-sunken: #e6ece7;
+
+  /* ink */
+  --ink: #12271a;
+  --ink-soft: #3c4f42;
+  --ink-mute: #6e8074;
+
+  /* line: 그림자 대신 그린 틴트 1px 테두리 */
+  --line: rgb(26 86 50 / 0.14);
+  --line-strong: rgb(26 86 50 / 0.28);
+
+  /* brand: 유일한 액센트 */
+  --accent: #1a5632;
+  --accent-ink: #f0f3ef;
+  --accent-subtle: rgb(26 86 50 / 0.08);
+
+  /* status: 점, 배지, 벽돌에만 쓴다. 이 다섯 개 외에는 만들지 않는다 */
+  --st-running: #17a06c;
+  --st-available: #2c6dec;
+  --st-warning: #c98a14;
+  --st-error: #d04545;
+  --st-maintenance: #7c6bd6;
+
+  --chart-grid: rgb(26 86 50 / 0.1);
+}
+
+.dark {
+  --bg: #0b110d;
+  --surface: #101812;
+  --surface-raised: #152019;
+  --surface-sunken: #080c09;
+
+  --ink: #e8eee9;
+  --ink-soft: #b4c1b8;
+  --ink-mute: #7f9185;
+
+  --line: rgb(120 200 150 / 0.12);
+  --line-strong: rgb(120 200 150 / 0.26);
+
+  --accent: #34a863;
+  --accent-ink: #07100a;
+  --accent-subtle: rgb(52 168 99 / 0.12);
+
+  --st-running: #36d9a2;
+  --st-available: #5595ff;
+  --st-warning: #e6b04a;
+  --st-error: #f07171;
+  --st-maintenance: #a193f0;
+
+  --chart-grid: rgb(120 200 150 / 0.1);
+}
+
+/* Tailwind 유틸리티 이름과 토큰을 연결한다. bg-surface, text-ink-mute, border-line ... */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-raised: var(--surface-raised);
+  --color-sunken: var(--surface-sunken);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-mute: var(--ink-mute);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-subtle: var(--accent-subtle);
+
+  --color-st-running: var(--st-running);
+  --color-st-available: var(--st-available);
+  --color-st-warning: var(--st-warning);
+  --color-st-error: var(--st-error);
+  --color-st-maintenance: var(--st-maintenance);
+
+  --font-sans: 'Pretendard Variable', Pretendard, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-brand: 'Amaranth', var(--font-sans);
+}
+
+/* 타입 스케일: 12 / 13 / 14 / 16 / 20 / 24 / 32. 이 밖의 크기는 쓰지 않는다 */
+@theme {
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+  --text-sm: 13px;
+  --text-sm--line-height: 20px;
+  --text-base: 14px;
+  --text-base--line-height: 22px;
+  --text-lg: 16px;
+  --text-lg--line-height: 24px;
+  --text-xl: 20px;
+  --text-xl--line-height: 28px;
+  --text-2xl: 24px;
+  --text-2xl--line-height: 32px;
+  --text-3xl: 32px;
+  --text-3xl--line-height: 40px;
+
+  /* 컨트롤 4px, 패널 6px */
+  --radius-sm: 4px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+}

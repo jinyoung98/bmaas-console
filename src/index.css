@@ -1,0 +1,48 @@
+@import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
+@import '@fontsource-variable/jetbrains-mono';
+@import '@fontsource/amaranth/400.css';
+@import 'tailwindcss';
+@import './styles/tokens.css';
+@import './styles/motion.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  html {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+    word-break: keep-all;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    min-height: 100dvh;
+  }
+
+  * {
+    border-color: var(--line);
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* 호스트명, IP, 스펙 수치. 자릿수가 흔들리지 않게 tabular로 고정 */
+  .num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+  }
+}
