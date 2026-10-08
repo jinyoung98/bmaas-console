@@ -1,6 +1,6 @@
 import { STATUS_ORDER, type ServerStatus } from '@/lib/status'
 import { regions } from './regions'
-import type { Region, Server } from './types'
+import type { Region, RegionId, Server } from './types'
 
 export function statusCounts(servers: Server[]): Record<ServerStatus, number> {
   const counts = Object.fromEntries(STATUS_ORDER.map((s) => [s, 0])) as Record<ServerStatus, number>
@@ -10,6 +10,19 @@ export function statusCounts(servers: Server[]): Record<ServerStatus, number> {
 
 export function groupByRegion(servers: Server[]): { region: Region; servers: Server[] }[] {
   return regions.map((region) => ({ region, servers: servers.filter((s) => s.region === region.id) }))
+}
+
+export type ServerFilter = { q?: string; status?: ServerStatus | null; region?: RegionId | null }
+
+/** 검색어는 호스트명과 IP에 부분 일치. 비어 있는 조건은 건너뛴다 */
+export function filterServers(servers: Server[], { q, status, region }: ServerFilter): Server[] {
+  const needle = q?.trim().toLowerCase()
+  return servers.filter(
+    (s) =>
+      (!status || s.status === status) &&
+      (!region || s.region === region) &&
+      (!needle || s.hostname.toLowerCase().includes(needle) || s.ip.includes(needle)),
+  )
 }
 
 export const recentlyUpdated = (servers: Server[], n: number) =>

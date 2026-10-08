@@ -3,6 +3,12 @@ export type ServerStatus = 'running' | 'available' | 'warning' | 'error' | 'main
 /** 상태의 표시 순서와 이름. 스택 바, 탭, 범례가 모두 이 순서를 따른다 */
 export const STATUS_ORDER: ServerStatus[] = ['running', 'available', 'maintenance', 'warning', 'error']
 
+/** 심각도 순서. 정렬에 쓴다(오름차순 = 문제 있는 서버가 위). 표시 순서인 STATUS_ORDER와 다르다 */
+export const STATUS_SEVERITY: ServerStatus[] = ['error', 'warning', 'maintenance', 'available', 'running']
+
+/** 심각도 순번. 0이 가장 심각하다 */
+export const STATUS_RANK = Object.fromEntries(STATUS_SEVERITY.map((s, i) => [s, i])) as Record<ServerStatus, number>
+
 export const STATUS_LABEL: Record<ServerStatus, string> = {
   running: 'Running',
   available: 'Available',

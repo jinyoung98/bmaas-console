@@ -6,6 +6,7 @@ import { ComingSoon } from '@/pages/ComingSoon'
 import DesignSystem from '@/pages/DesignSystem'
 import Overview from '@/pages/Overview'
 import { Placeholder } from '@/pages/Placeholder'
+import Servers from '@/pages/Servers'
 
 export default function App() {
   return (
@@ -18,12 +19,7 @@ export default function App() {
               path="servers/:id"
               element={<Placeholder eyebrow="Servers" title="Server detail" description="서버 상세 화면입니다." step="6" />}
             />
-            <Route
-              path="servers"
-              element={
-                <Placeholder title="Servers" description="베어메탈 서버를 관리합니다." step="5" />
-              }
-            />
+            <Route path="servers" element={<Servers />} />
             <Route
               path="activity"
               element={

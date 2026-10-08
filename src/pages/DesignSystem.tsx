@@ -21,6 +21,7 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { Tooltip } from '@/components/ui/Tooltip'
 import { ActivityFeed } from '@/features/overview/ActivityFeed'
+import { DataGridVariants, ServersListPattern } from '@/features/design/DataGridDemos'
 import { FleetStatus } from '@/features/overview/FleetStatus'
 import { LocationsPanel, RACK_SIZE } from '@/features/overview/LocationsPanel'
 import { RecentServers } from '@/features/overview/RecentServers'
@@ -104,7 +105,6 @@ export default function DesignSystem() {
   return (
     <>
       <PageHeader
-        eyebrow="Design system"
         title="디자인 시스템"
         description="브릭섬 브랜드에서 가져온 토큰과, 모든 화면이 조립되는 컴포넌트입니다."
       />
@@ -214,8 +214,9 @@ export default function DesignSystem() {
             ]}
           />
         </div>
-        <Tabs value={tab} onValueChange={setTab} className="mt-6">
-          <TabsList>
+        {/* 좁은 화면에서는 탭 줄이 이 안에서 가로로 스크롤된다. 목록은 탭 전체 폭만큼 늘려 밑줄이 끝까지 이어지게 한다 */}
+        <Tabs value={tab} onValueChange={setTab} className="mt-6 overflow-x-auto">
+          <TabsList className="w-max min-w-full">
             <TabsTrigger value="all" count={48}>
               All
             </TabsTrigger>
@@ -336,6 +337,14 @@ export default function DesignSystem() {
           </div>
         </div>
       </Block>
+
+      <Block
+        title="DataGrid"
+        note="열 정의 하나로 그리는 표. 정렬, 행 선택과 일괄 작업 바, 열 표시, 페이지 자르기는 TanStack Table(headless)이 상태로 다루고 모양은 토큰으로 그립니다. 행 모양은 cards(행마다 선 박스)와 ruled(구분선 한 장) 두 가지. 헤더를 누르면 기본 → 오름 → 내림 → 기본 순서로 바뀝니다. Shift를 누른 채 체크하면 범위로 선택됩니다."
+      >
+        <DataGridVariants />
+      </Block>
+
       <LayerHeader title="Patterns" note="컴포넌트를 조합한 사용 예. Overview에 실제로 쓰이는 컴포넌트를 같은 데이터로 그립니다." />
 
       <Block
@@ -364,8 +373,12 @@ export default function DesignSystem() {
         </div>
       </Block>
 
-      <Block title="Row card table" note="Panel + StatusBadge + Mono 2단 셀. 행마다 선 박스를 둔 표. 행에 올리면 화살표가 움직이고 누르면 상세로 갑니다.">
+      <Block title="Recent servers" note="Panel + DataGrid(cards). 정렬과 선택 없이 열만 고른 표. 행에 올리면 화살표가 움직이고 누르면 상세로 갑니다.">
         <RecentServers servers={recent} />
+      </Block>
+
+      <Block title="Servers list" note="툴바(검색 · 상태 칩 · Columns · 리전 · 보기 전환) + DataGrid(cards, 정렬 · 선택 · 페이지). Servers 화면에서는 이 상태를 URL에 둡니다(?status, ?sort=cpu:desc, ?page).">
+        <ServersListPattern />
       </Block>
 
       <Block title="Timeline" note="Section + 틴트 링 상태 아이콘 + 레일. 호스트명 / 설명 / 상태 · 리전 · 시간의 3줄.">

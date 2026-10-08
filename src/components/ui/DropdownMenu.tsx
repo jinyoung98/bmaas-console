@@ -40,6 +40,17 @@ export const DropdownMenuSeparator = ({ className, ...props }: ComponentProps<ty
   <D.Separator className={cn('-mx-1 my-1 h-px bg-line', className)} {...props} />
 )
 
+export function DropdownMenuCheckboxItem({ className, children, ...props }: ComponentProps<typeof D.CheckboxItem>) {
+  return (
+    <D.CheckboxItem className={cn(item, 'pl-8', className)} {...props}>
+      <D.ItemIndicator className="absolute left-2 grid place-items-center">
+        <Check className="!text-accent" />
+      </D.ItemIndicator>
+      {children}
+    </D.CheckboxItem>
+  )
+}
+
 export function DropdownMenuRadioItem({ className, children, ...props }: ComponentProps<typeof D.RadioItem>) {
   return (
     <D.RadioItem className={cn(item, 'pl-8', className)} {...props}>

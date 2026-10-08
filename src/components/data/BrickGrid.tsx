@@ -19,7 +19,8 @@ export type Brick = {
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
-function Detail({ b }: { b: Brick }) {
+/** 벽돌 툴팁 내용. Servers 그리드 보기의 큰 벽돌도 같은 내용을 보여준다 */
+export function BrickDetail({ b }: { b: Brick }) {
   return (
     <div className="space-y-1">
       <Mono className="block font-medium">{b.label}</Mono>
@@ -51,7 +52,7 @@ export function BrickGrid({ bricks, className }: { bricks: Brick[]; className?: 
         <ul key={rack} className="flex gap-[3px]" aria-label={`랙 ${rack}`}>
           {items.map((b) => (
             <li key={b.id}>
-              <Tooltip content={<Detail b={b} />}>
+              <Tooltip content={<BrickDetail b={b} />}>
                 <Link
                   to={b.to}
                   aria-label={`${b.label}, ${STATUS_LABEL[b.status]}`}
