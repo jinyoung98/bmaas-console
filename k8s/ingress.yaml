@@ -1,0 +1,18 @@
+# 선택: Ingress 컨트롤러(nginx-ingress, Traefik 등)가 있을 때만 적용한다.
+# 클러스터에 컨트롤러가 여러 개면 spec.ingressClassName을 추가한다.
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bmaas-console
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bmaas-console
+                port:
+                  number: 80

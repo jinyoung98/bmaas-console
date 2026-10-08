@@ -24,23 +24,25 @@ npm run lint       # oxlint
 
 ## Kubernetes로 띄우기
 
-정적 파일을 nginx 이미지에 담아 올립니다. 서버 한 대라면 k3s가 가장 간단합니다(Ingress가 기본으로 포함됩니다).
+정적 파일을 nginx 이미지에 담아 이미 있는 클러스터에 올립니다. 노드 한 대(containerd)를 기준으로 쓰며, 레지스트리는 필요 없습니다.
 
 ```bash
-# 1. 클러스터 (서버에 한 번만)
-curl -sfL https://get.k3s.io | sh -
-
-# 2. 이미지 빌드 후 k3s에 불러오기 (레지스트리 불필요)
+# 1. 이미지 빌드 후 노드의 containerd에 불러오기
 docker build -t bmaas-console:0.1 .
-docker save bmaas-console:0.1 | sudo k3s ctr images import -
+docker save bmaas-console:0.1 | sudo ctr -n k8s.io images import -
 
-# 3. 배포
-sudo k3s kubectl apply -f k8s/app.yaml
-sudo k3s kubectl rollout status deploy/bmaas-console
+# 2. 배포 (Service는 NodePort 30080)
+kubectl apply -f k8s/app.yaml
+kubectl rollout status deploy/bmaas-console
 ```
 
-서버 IP의 80번 포트로 접속합니다. 레지스트리를 쓴다면 이미지를 푸시하고 `k8s/app.yaml`의 `image`만 바꾸면 됩니다.
-`nginx.conf`는 `/activity` 같은 경로로 바로 들어와도 `index.html`을 돌려주도록 되어 있습니다.
+`http://<노드 IP>:30080` 으로 접속합니다. 방화벽이 있으면 30080을 열어야 하고, 열기 어렵다면 `kubectl port-forward svc/bmaas-console 8080:80` 후 http://localhost:8080 으로 볼 수 있습니다.
+
+- 노드가 control-plane 하나뿐이면 파드가 스케줄되지 않을 수 있습니다(`Pending`). 이때는 `kubectl taint nodes <노드 이름> node-role.kubernetes.io/control-plane:NoSchedule-` 로 taint를 풀어야 합니다.
+- Ingress 컨트롤러가 있다면 `kubectl apply -f k8s/ingress.yaml` 도 적용할 수 있습니다.
+- 노드가 여러 대면 이미지를 레지스트리에 푸시하고 `k8s/app.yaml`의 `image`를 바꿉니다.
+- 클러스터가 없는 서버라면 [k3s](https://k3s.io)(`curl -sfL https://get.k3s.io | sh -`)가 가장 간단합니다. 이미 클러스터가 있는 서버에서는 실행하지 마세요.
+- `nginx.conf`는 `/activity` 같은 경로로 바로 들어와도 `index.html`을 돌려주도록 되어 있습니다.
 
 ## 화면
 
