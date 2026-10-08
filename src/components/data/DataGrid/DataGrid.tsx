@@ -7,7 +7,7 @@ import {
   type SortingState,
 } from '@tanstack/react-table'
 import { ArrowDown, ArrowUp, ChevronRight, ChevronsUpDown } from 'lucide-react'
-import { useEffect, useMemo, type ReactNode } from 'react'
+import { Fragment, useEffect, useMemo, type ReactNode } from 'react'
 import { useNavigate } from 'react-router'
 import { Value } from '@/components/data/Mono'
 import { Button } from '@/components/ui/Button'
@@ -66,8 +66,17 @@ type Props<T extends RowData> = {
 
   /** 넘기면 행 전체가 링크가 되고 끝에 화살표 열이 붙는다 */
   getRowHref?: (row: T) => string
+  /** 넘기면 행을 눌러(또는 Enter) 이 함수를 부른다. 상세를 드로어로 여는 화면용이고, 링크 열은 붙지 않는다 */
+  onRowClick?: (row: T) => void
+  /** onRowClick과 함께: 이 id의 행을 눌린 행으로 표시한다(열려 있는 드로어의 행) */
+  activeRowId?: string | null
   /** 넘기면 마지막 열에 화살표 대신 이 내용(⋯ 메뉴 등)을 놓는다. 이 칸의 클릭은 행 클릭으로 번지지 않는다 */
   rowActions?: (row: T) => ReactNode
+  /**
+   * 연속한 행을 key가 같은 것끼리 묶어 사이사이에 구분 행을 끼운다(Activity의 날짜 그룹). 정렬이 그 key 순서일 때만 넘긴다.
+   * 페이지 경계에서 그룹이 이어지면 다음 페이지 맨 위에 구분 행을 다시 그린다. count는 자르기 전 전체 데이터 기준이다
+   */
+  groupBy?: { key: (row: T) => string; label: (row: T, count: number) => ReactNode }
   /** 셀 좌우 여백을 12px로 줄인다. 열이 많은 목록 화면용 */
   compact?: boolean
 
@@ -140,7 +149,10 @@ export function DataGrid<T extends RowData>({
   defaultPageIndex = 0,
   onPageIndexChange,
   getRowHref,
+  onRowClick,
+  activeRowId,
   rowActions,
+  groupBy,
   compact = false,
   loading = false,
   loadingRows = 5,
@@ -174,6 +186,12 @@ export function DataGrid<T extends RowData>({
       ? rawSelection
       : (Object.fromEntries(kept.map((id) => [id, true])) as RowSelectionState)
   }, [rawSelection, ids])
+
+  const groupCounts = useMemo(() => {
+    const counts = new Map<string, number>()
+    if (groupBy) for (const row of data) counts.set(groupBy.key(row), (counts.get(groupBy.key(row)) ?? 0) + 1)
+    return counts
+  }, [data, groupBy])
 
   const size = pageSize ?? Math.max(1, data.length)
   const pageCount = Math.max(1, Math.ceil(data.length / size))
@@ -325,17 +343,48 @@ export function DataGrid<T extends RowData>({
                   {trailing && <td className={td('w-10')} />}
                 </tr>
               ))
-            : rows.map((row) => {
+            : rows.map((row, index) => {
                 const selected = row.getIsSelected()
                 const href = getRowHref?.(row.original)
+                const groupKey = groupBy?.key(row.original)
+                const groupStart = groupBy !== undefined && (index === 0 || groupBy.key(rows[index - 1].original) !== groupKey)
                 return (
+                  <Fragment key={row.id}>
+                    {groupStart && (
+                      <tr>
+                        <th
+                          scope="colgroup"
+                          colSpan={headers.length + (selectable ? 1 : 0) + (trailing ? 1 : 0)}
+                          className={cn(
+                            'h-[30px] border-t bg-sunken/60 text-left text-xs font-medium text-ink-soft',
+                            index === 0 && 'border-t-0',
+                            compact ? 'px-[12px]' : 'px-4',
+                          )}
+                        >
+                          {groupBy.label(row.original, groupCounts.get(groupKey!) ?? 0)}
+                        </th>
+                      </tr>
+                    )}
                   <tr
-                    key={row.id}
-                    onClick={href ? () => navigate(href) : undefined}
+                    onClick={href ? () => navigate(href) : onRowClick ? () => onRowClick(row.original) : undefined}
+                    onKeyDown={
+                      onRowClick
+                        ? (e) => {
+                            if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
+                              e.preventDefault()
+                              onRowClick(row.original)
+                            }
+                          }
+                        : undefined
+                    }
+                    tabIndex={onRowClick ? 0 : undefined}
+                    aria-current={activeRowId === row.id ? 'true' : undefined}
                     aria-selected={selectable ? selected : undefined}
                     className={cn(
                       'group',
-                      href && 'cursor-pointer',
+                      (href || onRowClick) && 'cursor-pointer',
+                      onRowClick && 'outline-none focus-visible:bg-accent-subtle',
+                      appearance === 'ruled' && activeRowId === row.id && s.selected,
                       s.tr,
                       appearance === 'ruled' && selected && s.selected,
                       // ruled + sticky: 헤더 아래 선(after)이 있으니 첫 행의 윗선은 빼서 2px로 겹치지 않게 한다
@@ -384,6 +433,7 @@ export function DataGrid<T extends RowData>({
                       )
                     )}
                   </tr>
+                  </Fragment>
                 )
               })}
         </tbody>

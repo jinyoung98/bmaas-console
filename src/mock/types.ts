@@ -53,6 +53,9 @@ export type Server = {
   updatedAt: number
 }
 
+/** 누가 한 일인가. user = 고객사 구성원, system = 자동 감지, provider = 브릭섬 운영팀 */
+export type ActivityActor = { kind: 'user' | 'system' | 'provider'; name: string }
+
 export type ActivityEvent = {
   id: string
   /** 상태 색을 그대로 빌려 중요도를 나타낸다 */
@@ -60,4 +63,7 @@ export type ActivityEvent = {
   hostname: string
   text: string
   at: number
+  actor: ActivityActor
+  /** Warning·Error가 해소된 시각. 없으면 아직 조치가 필요한 이슈다(다른 심각도에는 쓰지 않는다) */
+  resolvedAt?: number
 }

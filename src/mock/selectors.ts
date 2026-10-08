@@ -1,7 +1,7 @@
 import { STATUS_ORDER, type ServerStatus } from '@/lib/status'
 import { activity } from './activity'
 import { regions } from './regions'
-import type { ActivityEvent, Region, RegionId, Server } from './types'
+import type { ActivityActor, ActivityEvent, Region, RegionId, Server } from './types'
 
 export function statusCounts(servers: Server[]): Record<ServerStatus, number> {
   const counts = Object.fromEntries(STATUS_ORDER.map((s) => [s, 0])) as Record<ServerStatus, number>
@@ -38,10 +38,12 @@ const hashOf = (id: string) => [...id].reduce((h, c) => (h * 31 + c.charCodeAt(0
  * 한 서버의 활동, 최신순. mock/activity의 해당 호스트 이벤트에 생성·배포·OS 재설치 같은 합성 이벤트를 더한다.
  * 합성 이벤트의 시각은 서버 id로 정해져서 새로고침해도 같다.
  */
+const USER: ActivityActor = { kind: 'user', name: 'jinyoung@acme.co' }
+
 export function serverActivity(s: Server): ActivityEvent[] {
   const h = hashOf(s.id)
   const events: ActivityEvent[] = activity.filter((e) => e.hostname === s.hostname)
-  events.push({ id: `${s.id}-created`, severity: 'available', hostname: s.hostname, text: '서버가 생성되었습니다', at: s.createdAt })
+  events.push({ id: `${s.id}-created`, severity: 'available', hostname: s.hostname, text: '서버가 생성되었습니다', at: s.createdAt, actor: USER })
   if (s.os) {
     events.push({
       id: `${s.id}-deployed`,
@@ -49,6 +51,7 @@ export function serverActivity(s: Server): ActivityEvent[] {
       hostname: s.hostname,
       text: '배포가 완료되었습니다',
       at: s.createdAt + (6 + (h % 9)) * 60_000,
+      actor: USER,
     })
     if (h % 3 === 0 && !events.some((e) => e.text.includes('재설치'))) {
       events.push({
@@ -57,6 +60,7 @@ export function serverActivity(s: Server): ActivityEvent[] {
         hostname: s.hostname,
         text: `${s.os}로 OS가 재설치되었습니다`,
         at: Math.max(s.createdAt + 2 * 86_400_000, s.updatedAt - (h % 5) * 86_400_000),
+        actor: USER,
       })
     }
   }
@@ -95,4 +99,29 @@ const SSH_KEYS = ['jinyoung-macbook', 'ci-deploy', 'ops-shared']
 export function serverSshKeys(s: Server): string[] {
   const h = hashOf(s.id)
   return [SSH_KEYS[0], SSH_KEYS[1 + (h % 2)]]
+}
+
+export type ActivityRange = '24h' | '7d' | '30d'
+const RANGE_MS: Record<ActivityRange, number> = { '24h': 86_400_000, '7d': 7 * 86_400_000, '30d': 30 * 86_400_000 }
+
+export type ActivityFilter = { q?: string; severity?: ActivityEvent['severity'] | null; server?: string | null; range?: ActivityRange }
+
+/** 검색어는 이벤트 문장, 호스트명, 행위자에 부분 일치. 기간은 지금부터 거슬러 센다. 비어 있는 조건은 건너뛴다 */
+export function filterActivity(events: ActivityEvent[], { q, severity, server, range }: ActivityFilter): ActivityEvent[] {
+  const needle = q?.trim().toLowerCase()
+  const since = range ? Date.now() - RANGE_MS[range] : 0
+  return events.filter(
+    (e) =>
+      e.at >= since &&
+      (!severity || e.severity === severity) &&
+      (!server || e.hostname === server) &&
+      (!needle || [e.text, e.hostname, e.actor.name].some((v) => v.toLowerCase().includes(needle))),
+  )
+}
+
+/** 아직 해소되지 않은 Warning·Error. Error가 먼저, 같은 심각도 안에서는 최신순 */
+export function openIssues(events: ActivityEvent[]): ActivityEvent[] {
+  return events
+    .filter((e) => (e.severity === 'warning' || e.severity === 'error') && e.resolvedAt === undefined)
+    .sort((a, b) => (a.severity === b.severity ? b.at - a.at : a.severity === 'error' ? -1 : 1))
 }

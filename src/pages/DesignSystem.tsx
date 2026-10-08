@@ -22,6 +22,7 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { Tooltip } from '@/components/ui/Tooltip'
 import { ActivityFeed } from '@/features/overview/ActivityFeed'
+import { ActivityDrawerPattern, ActivityListPattern, OpenIssuesPattern } from '@/features/design/ActivityDemos'
 import { DataGridVariants, ServersListPattern } from '@/features/design/DataGridDemos'
 import { NoticeLineSamples, ServerDetailPattern, SpecStripSamples, StatusIconRow, TypeTagSamples } from '@/features/design/ServerDetailDemos'
 import { DesignBlockMenu, DesignToc } from '@/features/design/DesignNav'
@@ -562,6 +563,33 @@ export default function DesignSystem() {
             <div className="max-w-[360px]">
               <ActivityFeed events={events} />
             </div>
+          </>
+        ),
+      },
+      {
+        title: 'Activity list',
+        note: 'DataGrid(ruled) + Event 열의 상태 아이콘(Recent activity와 같은 StatusIcon). 열 순서는 Event → Server → Time → Actor(읽는 순서). 시간순 정렬일 때는 날짜별 그룹 머리글(오늘 / 어제 / 10월 6일 (월) + 그날 건수)이 끼고 Time은 시각만 씁니다. Server로 정렬하면 그룹 없이 평평한 표가 되고 Time에 날짜가 붙습니다. Time은 시각과 상대 시간 2단, Server는 호스트명과 도시 2단, Actor는 사용자만 진하게 쓰고 시스템과 브릭섬 운영팀은 흐리게 씁니다(좁은 폭에서 가장 먼저 숨음). 실제 Activity 화면은 이 표 위에 2행 툴바(검색 · 서버 선택 · 기간 / 심각도 칩)를 얹고 상태를 URL에 둡니다(?server, ?severity, ?range, ?sort, ?page). 여기서는 URL 없이 DataGrid가 정렬과 페이지를 스스로 관리하는 비제어 모드입니다.',
+        body: (
+          <>
+            <ActivityListPattern />
+          </>
+        ),
+      },
+      {
+        title: 'Activity issues banner',
+        note: 'Activity 표 위의 미해소 이슈 띠. 해소되지 않은 Warning·Error만 센다(mock의 resolvedAt이 없는 것, 기간 필터와 무관). Error가 있으면 머리 줄을 빨강으로 채우고(라이트는 흰 글자, 다크는 어두운 글자) Warning만 있으면 노랑 틴트로 한 단계 낮춰 색의 세기가 심각도를 같이 말합니다. 3건 이하는 목록까지 펼치고, 더 많으면 머리 한 줄로 접습니다. 머리의 Error·Warning 개수는 심각도 필터를 켜는 버튼이고, 목록의 행은 상세 드로어를 엽니다. 이슈가 없으면 띠 자체가 사라집니다.',
+        body: (
+          <>
+            <OpenIssuesPattern />
+          </>
+        ),
+      },
+      {
+        title: 'Activity detail drawer',
+        note: '행을 누르면 오른쪽에서 420px 드로어가 겹칩니다. 목록의 필터와 스크롤은 그대로입니다. 위에서부터 상태 · 시간 · 닫기 → 제목 + 진행 여부(진행 중 / 해소됨 · 지속 시간) → 서버 · 위치 · 발생 · 해소 · 주체 · ID → 안내(Warning · Error · Maintenance만, Available · Running은 없음) → 서버 보기 · 링크 복사. 열린 이벤트는 ?event=ID로 URL에 있어 링크를 공유하면 드로어가 열린 채 열립니다. 아래 버튼으로 심각도별 모양을 열어 보세요.',
+        body: (
+          <>
+            <ActivityDrawerPattern />
           </>
         ),
       },

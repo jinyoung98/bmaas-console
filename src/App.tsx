@@ -6,9 +6,9 @@ import { TooltipProvider } from '@/components/ui/Tooltip'
 import { ComingSoon } from '@/pages/ComingSoon'
 import DesignSystem from '@/pages/DesignSystem'
 import Overview from '@/pages/Overview'
-import { Placeholder } from '@/pages/Placeholder'
 import ServerDetail from '@/pages/ServerDetail'
 import Servers from '@/pages/Servers'
+import Activity from '@/pages/Activity'
 
 export default function App() {
   return (
@@ -19,12 +19,7 @@ export default function App() {
             <Route index element={<Overview />} />
             <Route path="servers/:id" element={<ServerDetail />} />
             <Route path="servers" element={<Servers />} />
-            <Route
-              path="activity"
-              element={
-                <Placeholder title="Activity" description="서버에서 일어난 모든 이벤트입니다." step="7" />
-              }
-            />
+            <Route path="activity" element={<Activity />} />
             <Route
               path="networks"
               element={
