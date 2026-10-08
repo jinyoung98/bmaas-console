@@ -22,6 +22,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { Tooltip } from '@/components/ui/Tooltip'
 import { ActivityFeed } from '@/features/overview/ActivityFeed'
 import { DataGridVariants, ServersListPattern } from '@/features/design/DataGridDemos'
+import { ServerCardVariants, ServerCellSamples, ServersGridPattern } from '@/features/design/ServerDemos'
 import { FleetStatus } from '@/features/overview/FleetStatus'
 import { LocationsPanel, RACK_SIZE } from '@/features/overview/LocationsPanel'
 import { RecentServers } from '@/features/overview/RecentServers'
@@ -345,6 +346,20 @@ export default function DesignSystem() {
         <DataGridVariants />
       </Block>
 
+      <Block
+        title="Server card"
+        note="Grid 보기의 서버 한 대. 상태 밴드(상태색 7%) → 이름과 ⋯ 메뉴 → 모델 → 스펙 3칸 → 사용률 → IP와 월 비용. GPU 서버는 모델 줄과 스펙(GPUs · VRAM · Memory)이 바뀌고, 켜져 있지 않은 서버는 사용률 대신 사유를 적습니다. 그림자 없이 선으로만 구분하고, Error 카드는 테두리에 상태색을 섞습니다. 그리드 영역이 480px보다 좁으면 같은 컴포넌트가 축약형(이름 · 모델 · CPU % 한 줄 · IP와 월 비용)으로 바뀝니다."
+      >
+        <ServerCardVariants />
+      </Block>
+
+      <Block
+        title="Row menu & cells"
+        note="⋯ 메뉴는 표의 마지막 열과 카드에 같은 컴포넌트를 씁니다. 동작은 mock이라 요청 알림(토스트)만 띄우고, 메뉴 클릭은 행·카드의 상세 이동으로 번지지 않습니다. Compute는 GPU 구성을 먼저, Utilization은 CPU %와 56px 막대(75%/90%에서 색이 바뀜)입니다."
+      >
+        <ServerCellSamples />
+      </Block>
+
       <LayerHeader title="Patterns" note="컴포넌트를 조합한 사용 예. Overview에 실제로 쓰이는 컴포넌트를 같은 데이터로 그립니다." />
 
       <Block
@@ -377,8 +392,15 @@ export default function DesignSystem() {
         <RecentServers servers={recent} />
       </Block>
 
-      <Block title="Servers list" note="툴바(검색 · 상태 칩 · Columns · 리전 · 보기 전환) + DataGrid(cards, 정렬 · 선택 · 페이지). Servers 화면에서는 이 상태를 URL에 둡니다(?status, ?sort=cpu:desc, ?page).">
+      <Block
+        title="Servers list"
+        note="2행 툴바(1행: 검색 + Columns · 리전 · 보기 묶음 / 2행: 상태 칩 + GPU 칩) + DataGrid(cards, 셀 여백 12px, ⋯ 메뉴). IP는 호스트명 아래에 둡니다. 표가 놓인 영역이 좁아지면 Memory(1010px 미만), Location(910px 미만) 순으로 열이 자동으로 숨고(Columns 메뉴 상태와 별개), 830px 미만에서는 카드로 시작합니다. Servers 화면에서는 이 상태를 URL에 둡니다(?status, ?gpu, ?sort, ?view, ?page)."
+      >
         <ServersListPattern />
+      </Block>
+
+      <Block title="Servers grid" note="Server card를 영역 폭에 따라 3열(960px 이상) / 2열(640px 이상) / 1열로 놓습니다. 간격 16px, 페이지당 12장(여기서는 6장).">
+        <ServersGridPattern />
       </Block>
 
       <Block title="Timeline" note="Section + 틴트 링 상태 아이콘 + 레일. 호스트명 / 설명 / 상태 · 리전 · 시간의 3줄.">

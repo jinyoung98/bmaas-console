@@ -33,6 +33,8 @@ export type Server = {
   gpu?: Gpu
   usage: Usage
   uptimeSec: number
+  /** 월 이용료(원). 계약 단가라 사용률과 상관없이 고정 */
+  monthlyCost: number
   createdAt: number
   updatedAt: number
 }

@@ -25,6 +25,11 @@ export type GridMeta = {
   cellClassName?: string
   /** 이 열로 정렬할 때 값이 같은 행끼리는 이 열의 오름차순으로 다시 정렬한다(정렬 방향과 상관없이) */
   thenBy?: string
+  /**
+   * 표가 놓인 영역이 이 폭(px)보다 좁으면 자동으로 숨긴다. 값이 클수록 먼저 사라지므로 이 값이 곧 우선순위다.
+   * Columns 메뉴의 상태와는 별개라, 영역이 다시 넓어지면 돌아온다
+   */
+  hideBelow?: number
 }
 
 /**

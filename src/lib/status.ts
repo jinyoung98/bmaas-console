@@ -9,6 +9,9 @@ export const STATUS_SEVERITY: ServerStatus[] = ['error', 'warning', 'maintenance
 /** 심각도 순번. 0이 가장 심각하다 */
 export const STATUS_RANK = Object.fromEntries(STATUS_SEVERITY.map((s, i) => [s, i])) as Record<ServerStatus, number>
 
+/** 켜져 있어서 사용률을 읽을 수 있는 상태 */
+export const isLiveStatus = (s: ServerStatus) => s === 'running' || s === 'warning'
+
 export const STATUS_LABEL: Record<ServerStatus, string> = {
   running: 'Running',
   available: 'Available',

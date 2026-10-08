@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/Button'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/cn'
+import { useElementWidth } from '@/lib/useElementWidth'
 import { ColumnsMenu } from './ColumnsMenu'
 import { gridFeatures, type GridColumn, type GridFeatures } from './columns'
 import { Pagination } from './Pagination'
@@ -65,6 +66,10 @@ type Props<T extends RowData> = {
 
   /** 넘기면 행 전체가 링크가 되고 끝에 화살표 열이 붙는다 */
   getRowHref?: (row: T) => string
+  /** 넘기면 마지막 열에 화살표 대신 이 내용(⋯ 메뉴 등)을 놓는다. 이 칸의 클릭은 행 클릭으로 번지지 않는다 */
+  rowActions?: (row: T) => ReactNode
+  /** 셀 좌우 여백을 12px로 줄인다. 열이 많은 목록 화면용 */
+  compact?: boolean
 
   loading?: boolean
   loadingRows?: number
@@ -135,6 +140,8 @@ export function DataGrid<T extends RowData>({
   defaultPageIndex = 0,
   onPageIndexChange,
   getRowHref,
+  rowActions,
+  compact = false,
   loading = false,
   loadingRows = 5,
   empty,
@@ -183,6 +190,16 @@ export function DataGrid<T extends RowData>({
     if (pageIndexProp === undefined && pageSize !== undefined && pageIndex !== page) setPageIndex(page)
   }, [pageIndexProp, pageSize, pageIndex, page, setPageIndex])
 
+  // 열 meta.hideBelow(px)보다 표가 놓인 영역이 좁으면 그 열을 잠시 숨긴다. 뷰포트가 아니라 이 영역 폭 기준이다.
+  // 사용자가 Columns 메뉴로 정한 상태는 건드리지 않고, 엔진에 넘길 때만 합친다. hideBelow가 없으면 재지 않는다
+  const responsive = columns.some((c) => c.meta?.hideBelow !== undefined)
+  const [measure, width] = useElementWidth(responsive)
+  const engineVisibility = useMemo(() => {
+    if (!responsive || width === null) return columnVisibility
+    const squeezed = columns.filter((c) => c.id && (c.meta?.hideBelow ?? 0) > width).map((c) => [c.id!, false] as const)
+    return squeezed.length ? { ...columnVisibility, ...Object.fromEntries(squeezed) } : columnVisibility
+  }, [responsive, width, columns, columnVisibility])
+
   // 화면에 보이는 정렬은 한 열이지만, 그 열에 thenBy가 있으면 보조 정렬을 뒤에 붙여 엔진에 넘긴다.
   // 엔진은 같은 값끼리 원래 순서를 지키는데 이건 내림차순에서도 뒤집히지 않으므로, 보조 정렬은 항상 오름차순이 된다
   const active = sorting[0]
@@ -197,7 +214,7 @@ export function DataGrid<T extends RowData>({
     state: {
       sorting: engineSorting,
       rowSelection,
-      columnVisibility,
+      columnVisibility: engineVisibility,
       pagination: { pageIndex: page, pageSize: size },
     },
     enableSorting: canSort,
@@ -212,7 +229,10 @@ export function DataGrid<T extends RowData>({
   const selectedIds = Object.keys(rowSelection)
   const headers = table.getHeaderGroups()[0]?.headers ?? []
   const rows = table.getRowModel().rows
-  const th = (extra?: string) => cn(s.th, stickyHeader && s.sticky, extra)
+  const pad = compact ? 'px-[12px]' : undefined
+  const th = (extra?: string) => cn(s.th, pad, stickyHeader && s.sticky, extra)
+  const td = (...extra: (string | false | undefined)[]) => cn(s.td, pad, ...extra)
+  const trailing = Boolean(getRowHref || rowActions)
 
   function toggleSort(id: string, dir: false | 'asc' | 'desc') {
     setSorting(dir === 'desc' ? [] : [{ id, desc: dir === 'asc' }])
@@ -221,7 +241,7 @@ export function DataGrid<T extends RowData>({
   }
 
   const grid = (
-    <div className={cn(s.scroll, scrollClassName)}>
+    <div ref={responsive ? measure : undefined} className={cn(s.scroll, scrollClassName)}>
       <table className={cn(s.table, tableClassName)}>
         <thead>
           <tr>
@@ -273,11 +293,11 @@ export function DataGrid<T extends RowData>({
                 </th>
               )
             })}
-            {getRowHref && (
+            {trailing && (
               // relative: sr-only가 표의 가로 스크롤 상자 밖(main) 기준으로 잡혀 좁은 화면에서 main을 가로로 늘리는 것을 막는다.
               // sticky도 위치 지정이라 같은 역할을 하므로, 둘이 겹치면 sticky를 남긴다
               <th className={th(stickyHeader ? undefined : 'relative')}>
-                <span className="sr-only">Open</span>
+                <span className="sr-only">{rowActions ? 'Actions' : 'Open'}</span>
               </th>
             )}
           </tr>
@@ -287,12 +307,12 @@ export function DataGrid<T extends RowData>({
             ? Array.from({ length: loadingRows }, (_, i) => (
                 <tr key={i} aria-hidden>
                   {selectable && (
-                    <td className={cn(s.td, 'w-[36px] pr-0')}>
+                    <td className={td('w-[36px] pr-0')}>
                       <Checkbox disabled tabIndex={-1} />
                     </td>
                   )}
                   {headers.map((header, j) => (
-                    <td key={header.id} className={s.td}>
+                    <td key={header.id} className={td()}>
                       <Skeleton
                         className={cn(
                           'h-[12px]',
@@ -302,7 +322,7 @@ export function DataGrid<T extends RowData>({
                       />
                     </td>
                   ))}
-                  {getRowHref && <td className={cn(s.td, 'w-10')} />}
+                  {trailing && <td className={td('w-10')} />}
                 </tr>
               ))
             : rows.map((row) => {
@@ -324,7 +344,7 @@ export function DataGrid<T extends RowData>({
                   >
                     {selectable && (
                       <td
-                        className={cn(s.td, 'w-[36px] pr-0', appearance === 'cards' && selected && s.selected)}
+                        className={td('w-[36px] pr-0', appearance === 'cards' && selected && s.selected)}
                         onClick={(e) => e.stopPropagation()}
                       >
                         <Checkbox
@@ -339,8 +359,7 @@ export function DataGrid<T extends RowData>({
                       return (
                         <td
                           key={cell.id}
-                          className={cn(
-                            s.td,
+                          className={td(
                             meta?.align === 'right' && 'text-right',
                             meta?.cellClassName,
                             appearance === 'cards' && selected && s.selected,
@@ -350,10 +369,19 @@ export function DataGrid<T extends RowData>({
                         </td>
                       )
                     })}
-                    {href && (
-                      <td className={cn(s.td, 'w-10 text-right', appearance === 'cards' && selected && s.selected)}>
-                        <ChevronRight className="inline size-4 text-ink-mute opacity-50 transition-[opacity,transform] group-hover:translate-x-0.5 group-hover:opacity-100" />
+                    {rowActions ? (
+                      <td
+                        className={td('w-[44px] pr-[8px] text-right', appearance === 'cards' && selected && s.selected)}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <span className="inline-flex">{rowActions(row.original)}</span>
                       </td>
+                    ) : (
+                      href && (
+                        <td className={td('w-10 text-right', appearance === 'cards' && selected && s.selected)}>
+                          <ChevronRight className="inline size-4 text-ink-mute opacity-50 transition-[opacity,transform] group-hover:translate-x-0.5 group-hover:opacity-100" />
+                        </td>
+                      )
                     )}
                   </tr>
                 )

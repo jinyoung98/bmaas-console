@@ -1,6 +1,7 @@
 import { KeyRound, Network } from 'lucide-react'
 import { BrowserRouter, Route, Routes } from 'react-router'
 import { AppShell } from '@/components/layout/AppShell'
+import { Toaster } from '@/components/ui/Toaster'
 import { TooltipProvider } from '@/components/ui/Tooltip'
 import { ComingSoon } from '@/pages/ComingSoon'
 import DesignSystem from '@/pages/DesignSystem'
@@ -54,6 +55,7 @@ export default function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+      <Toaster />
     </TooltipProvider>
   )
 }

@@ -3,34 +3,24 @@ import { SearchX } from 'lucide-react'
 import { useMemo, useState, type ReactNode } from 'react'
 import { ColumnsMenu } from '@/components/data/DataGrid/ColumnsMenu'
 import { DataGrid, type DataGridAppearance } from '@/components/data/DataGrid/DataGrid'
+import { Pagination } from '@/components/data/DataGrid/Pagination'
 import { EmptyState } from '@/components/data/EmptyState'
 import { Mono } from '@/components/data/Mono'
 import { Button } from '@/components/ui/Button'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
-import { ServerBrickMap } from '@/features/servers/ServerBrickMap'
-import { pickServerColumns } from '@/features/servers/serverColumns'
+import { ServerActionsMenu } from '@/features/servers/ServerActionsMenu'
+import { ServerCard } from '@/features/servers/ServerCard'
+import { pickServerColumns, SERVER_LIST_HIDDEN, serverListColumns, sortServers } from '@/features/servers/serverColumns'
 import { ServerToolbar } from '@/features/servers/ServerToolbar'
 import type { ServerView } from '@/features/servers/useServerQuery'
 import type { ServerStatus } from '@/lib/status'
-import { filterServers, groupByRegion, statusCounts } from '@/mock/selectors'
+import { filterServers, statusCounts } from '@/mock/selectors'
 import { servers } from '@/mock/servers'
 import type { RegionId } from '@/mock/types'
 
 const sample = servers.filter((_, i) => i % 8 === 2).slice(0, 5)
 const compact = pickServerColumns(['hostname', 'status', 'location', 'cpu', 'memory', 'uptime'])
-const full = pickServerColumns([
-  'hostname',
-  'status',
-  'location',
-  'cpu',
-  'memory',
-  'storage',
-  'ip',
-  'uptime',
-  'updated',
-])
 const id = (s: { id: string }) => s.id
-const groups = groupByRegion(servers)
 
 function Variant({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -172,23 +162,21 @@ export function DataGridVariants() {
   )
 }
 
-/** Patterns 층: Servers 목록. 툴바(검색 · 상태 칩 · Columns · 리전 · 보기) + DataGrid + Pagination. 상태는 URL 대신 이 안에 둔다 */
+/** Patterns 층: Servers 목록. 2행 툴바 + DataGrid(cards, compact, ⋯ 메뉴) 또는 카드 그리드. 상태는 URL 대신 이 안에 둔다 */
 export function ServersListPattern() {
   const [q, setQ] = useState('')
   const [status, setStatus] = useState<ServerStatus | null>(null)
   const [region, setRegion] = useState<RegionId | null>(null)
+  const [gpu, setGpu] = useState(false)
   const [view, setView] = useState<ServerView>('table')
   const [sorting, setSorting] = useState<SortingState>([])
   const [selection, setSelection] = useState<RowSelectionState>({})
-  const [visibility, setVisibility] = useState<ColumnVisibilityState>({
-    updated: false,
-  })
+  const [visibility, setVisibility] = useState<ColumnVisibilityState>(SERVER_LIST_HIDDEN)
   const [page, setPage] = useState(0)
 
-  const scoped = useMemo(() => filterServers(servers, { q, region }), [q, region])
+  const base = useMemo(() => filterServers(servers, { q, region }), [q, region])
+  const scoped = useMemo(() => filterServers(base, { gpu }), [base, gpu])
   const filtered = useMemo(() => filterServers(scoped, { status }), [scoped, status])
-  const [picked, setPicked] = useState<string | null>(null)
-  const visible = useMemo(() => new Set(filtered.map((s) => s.id)), [filtered])
   /** 필터가 바뀌면 1페이지로 */
   const filter = (fn: () => void) => {
     fn()
@@ -199,6 +187,7 @@ export function ServersListPattern() {
       setQ('')
       setStatus(null)
       setRegion(null)
+      setGpu(false)
     })
   const noResults = (
     <EmptyState
@@ -208,6 +197,7 @@ export function ServersListPattern() {
       action={<Button onClick={reset}>필터 초기화</Button>}
     />
   )
+  const cards = sortServers(filtered, sorting)
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-[12px]">
@@ -215,42 +205,66 @@ export function ServersListPattern() {
         q={q}
         status={status}
         region={region}
+        gpu={gpu}
         view={view}
         counts={statusCounts(scoped)}
+        gpuCount={base.filter((s) => s.gpu).length}
         onSearch={(v) => filter(() => setQ(v))}
         onStatus={(v) => filter(() => setStatus(v))}
         onRegion={(v) => filter(() => setRegion(v))}
-        onView={setView}
-        extra={view === 'table' && <ColumnsMenu columns={full} value={visibility} onChange={setVisibility} />}
+        onGpu={(v) => filter(() => setGpu(v))}
+        onView={(v) => filter(() => setView(v))}
+        extra={
+          view === 'table' && <ColumnsMenu columns={serverListColumns} value={visibility} onChange={setVisibility} />
+        }
       />
       {view === 'grid' ? (
-        filtered.length === 0 ? (
+        cards.length === 0 ? (
           noResults
         ) : (
-          <ServerBrickMap
-            groups={groups}
-            visible={visible}
-            selected={filtered.find((s) => s.id === picked) ?? null}
-            onSelect={setPicked}
-          />
+          <div className="@container">
+            <ul className="grid grid-cols-1 gap-[16px] @[640px]:grid-cols-2 @[960px]:grid-cols-3">
+              {cards.slice(page * 6, page * 6 + 6).map((s) => (
+                <li key={s.id} className="flex">
+                  <ServerCard server={s} className="flex-1" />
+                </li>
+              ))}
+            </ul>
+            <Pagination
+              className="mt-[16px]"
+              pageIndex={page}
+              pageSize={6}
+              total={cards.length}
+              onPageChange={setPage}
+            />
+          </div>
         )
       ) : (
         <DataGrid
           data={filtered}
-          columns={full}
+          columns={serverListColumns}
           getRowId={id}
+          rowActions={(s) => <ServerActionsMenu server={s} />}
+          compact
           sorting={sorting}
           onSortingChange={(next) => filter(() => setSorting(next))}
           rowSelection={selection}
           onRowSelectionChange={setSelection}
           selectionUnit="대"
-          bulkActions={() => <Button size="sm">재부팅</Button>}
+          bulkActions={() => (
+            <>
+              <Button size="sm">재부팅</Button>
+              <Button size="sm">전원 끄기</Button>
+              <Button size="sm" variant="danger">
+                서버 해제
+              </Button>
+            </>
+          )}
           columnVisibility={visibility}
           pageSize={5}
           pageIndex={page}
           onPageIndexChange={setPage}
           scrollClassName="-my-1.5"
-          tableClassName="min-w-[1040px]"
           empty={noResults}
         />
       )}

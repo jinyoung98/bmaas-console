@@ -120,6 +120,28 @@ const UPTIME_OVERRIDE: Record<string, number> = { 'bm-busan-02': 3300 }
 const OS_GENERAL = ['Ubuntu 24.04 LTS', 'Ubuntu 22.04 LTS', 'Rocky Linux 9', 'Debian 12', 'RHEL 9']
 const OS_GPU = ['Ubuntu 22.04 LTS', 'Ubuntu 24.04 LTS']
 
+/** GPU 서버 기본가(원/월). 개수에 비례한다 */
+const GPU_BASE: Record<string, { count: number; price: number }> = {
+  L40S: { count: 4, price: 2_600_000 },
+  H200: { count: 8, price: 19_800_000 },
+  MI300X: { count: 8, price: 14_500_000 },
+}
+
+/** 리전 계수. 지역별 전력·회선 단가 차이 */
+const REGION_FACTOR: Record<RegionId, number> = {
+  'kr-seoul-1': 1,
+  'kr-gwangju-1': 0.97,
+  'kr-busan-1': 0.95,
+  'jp-tokyo-1': 1.08,
+}
+
+// 월 비용 = (기본가 + 스토리지 TB × 40,000) × 리전 계수, 1,000원 단위 반올림. 기본가: CPU = cores×9,800 + memoryGB×2,100, GPU = GPU_BASE(개수 비례)
+function monthlyCostFor(cores: number, memoryGB: number, storageTB: number, region: RegionId, gpu?: Gpu) {
+  const gpuBase = gpu && GPU_BASE[gpu.model]
+  const base = gpu && gpuBase ? (gpuBase.price * gpu.count) / gpuBase.count : cores * 9800 + memoryGB * 2100
+  return Math.round(((base + storageTB * 40_000) * REGION_FACTOR[region]) / 1000) * 1000
+}
+
 const NOW = Date.now()
 const DAY = 86_400_000
 const pad = (n: number) => String(n).padStart(2, '0')
@@ -160,6 +182,7 @@ function build(): Server[] {
           hostname in UPDATED_MINUTES_AGO ? NOW - UPDATED_MINUTES_AGO[hostname] * 60_000 : NOW - between(rnd, 1, 30) * DAY - between(rnd, 0, 80_000_000)
         const osPool = preset.gpu ? OS_GPU : OS_GENERAL
         const storageTB = +preset.storage.reduce((s, d) => s + d.sizeTB * d.count, 0).toFixed(2)
+        const cores = preset.cpu.sockets * preset.cpu.coresPerSocket
 
         out.push({
           id: hostname,
@@ -168,7 +191,7 @@ function build(): Server[] {
           region: regionId,
           ip: `10.${IP_BASE[regionId]}.${Math.ceil(n / 8)}.${10 + n}`,
           cpu: preset.cpu,
-          cores: preset.cpu.sockets * preset.cpu.coresPerSocket,
+          cores,
           memoryGB: preset.memoryGB,
           storage: preset.storage,
           storageTB,
@@ -177,6 +200,7 @@ function build(): Server[] {
           gpu: preset.gpu,
           usage: usageFor(status, !!preset.gpu, rnd),
           uptimeSec,
+          monthlyCost: monthlyCostFor(cores, preset.memoryGB, storageTB, regionId, preset.gpu),
           createdAt: NOW - uptimeSec * 1000 - between(rnd, 5, 200) * DAY,
           updatedAt,
         })

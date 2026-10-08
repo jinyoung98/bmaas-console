@@ -22,6 +22,9 @@ export function formatUptime(sec: number) {
   return d > 0 ? `${d}d ${h}h` : h > 0 ? `${h}h ${m}m` : `${m}m`
 }
 
+/** ₩1,165,000. 원 단위 정수 */
+export const formatKRW = (won: number) => `₩${Math.round(won).toLocaleString('en-US')}`
+
 const pad = (n: number) => String(n).padStart(2, '0')
 
 /** 차트 축과 툴팁에 쓰는 시각. 7일 범위에서는 날짜를 함께 보여준다 */
