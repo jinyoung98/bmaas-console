@@ -22,6 +22,26 @@ npm run typecheck  # 타입 검사만
 npm run lint       # oxlint
 ```
 
+## Kubernetes로 띄우기
+
+정적 파일을 nginx 이미지에 담아 올립니다. 서버 한 대라면 k3s가 가장 간단합니다(Ingress가 기본으로 포함됩니다).
+
+```bash
+# 1. 클러스터 (서버에 한 번만)
+curl -sfL https://get.k3s.io | sh -
+
+# 2. 이미지 빌드 후 k3s에 불러오기 (레지스트리 불필요)
+docker build -t bmaas-console:0.1 .
+docker save bmaas-console:0.1 | sudo k3s ctr images import -
+
+# 3. 배포
+sudo k3s kubectl apply -f k8s/app.yaml
+sudo k3s kubectl rollout status deploy/bmaas-console
+```
+
+서버 IP의 80번 포트로 접속합니다. 레지스트리를 쓴다면 이미지를 푸시하고 `k8s/app.yaml`의 `image`만 바꾸면 됩니다.
+`nginx.conf`는 `/activity` 같은 경로로 바로 들어와도 `index.html`을 돌려주도록 되어 있습니다.
+
 ## 화면
 
 | 경로 | 내용 |
