@@ -1,7 +1,7 @@
 import type { ComponentProps } from 'react'
 import { cn } from '@/lib/cn'
 
-/** 호스트명, IP, 모델명 등 "기계가 말하는 값". 본문과 시각적으로 구분하는 단일 진입점 */
+/** 호스트명, IP, 모델명 등 "기계가 말하는 값". Pretendard에 tabular-nums를 켠 단일 진입점(글꼴은 본문과 같다) */
 export function Mono({ className, ...props }: ComponentProps<'span'>) {
   return <span className={cn('num', className)} {...props} />
 }

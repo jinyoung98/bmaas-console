@@ -19,7 +19,7 @@ type Props = {
   threshold?: number
 }
 
-const AXIS_TICK = { fill: 'var(--ink-mute)', fontSize: 11, fontFamily: 'var(--font-mono)' }
+const AXIS_TICK = { fill: 'var(--ink-mute)', fontSize: 11, fontFamily: 'var(--font-sans)' }
 
 /** Recharts를 토큰 색으로 재스타일한 단색 영역 차트 */
 export function AreaChart({ data, height, domain = [0, 100], unit, formatTick, formatTooltipTime, formatAxis, threshold }: Props) {

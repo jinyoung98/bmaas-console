@@ -88,7 +88,6 @@
   --color-st-maintenance: var(--st-maintenance);
 
   --font-sans: 'Pretendard Variable', Pretendard, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-brand: 'Amaranth', var(--font-sans);
 }
 

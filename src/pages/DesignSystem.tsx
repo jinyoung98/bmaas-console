@@ -166,7 +166,7 @@ export default function DesignSystem() {
       },
       {
         title: 'Typography',
-        note: '본문은 Pretendard, 서버가 말하는 값은 JetBrains Mono. 스케일은 12 / 13 / 14 / 16 / 20 / 24 / 32. 예외로 11px는 상태 라벨과 2단 셀의 보조줄(리전 id, CPU 모델), 단축키 표시에만 씁니다.',
+        note: '글꼴은 Pretendard 하나입니다. 호스트명, IP, 수치 같은 서버가 말하는 값은 같은 글꼴에 tabular-nums(자릿수 폭 고정)를 켜서 표에서 세로로 맞습니다. 스케일은 12 / 13 / 14 / 16 / 20 / 24 / 32. 예외로 11px는 상태 라벨과 2단 셀의 보조줄(리전 id, CPU 모델), 단축키 표시에만 씁니다.',
         body: (
           <>
             <div className="grid gap-8 md:grid-cols-2">
@@ -362,7 +362,7 @@ export default function DesignSystem() {
       },
       {
         title: 'Value & Sparkline',
-        note: '수치는 항상 Mono(Value)이고 단위는 한 단계 흐립니다. Sparkline은 축 없이 추세만 보여줍니다.',
+        note: '수치는 항상 Value(tabular-nums)이고 단위는 한 단계 흐립니다. Sparkline은 축 없이 추세만 보여줍니다.',
         body: (
           <>
             <div className="flex flex-wrap items-end gap-10">
@@ -374,7 +374,7 @@ export default function DesignSystem() {
       },
       {
         title: 'KeyValueList',
-        note: '상세 화면의 사양 목록. 라벨은 흐리게, 값은 Mono로.',
+        note: '상세 화면의 사양 목록. 라벨은 흐리게, 값은 tabular-nums로.',
         body: (
           <>
             <div className="max-w-md">
@@ -451,7 +451,7 @@ export default function DesignSystem() {
       },
       {
         title: 'Status icon & type tag',
-        note: '상태 다섯 가지를 글리프(체크 · ! · X · 속 빈 원 · 렌치)로 말하는 20px 틴트 링 아이콘. 타임라인 항목과 알림 줄이 같은 컴포넌트를 씁니다. 유형 태그는 CPU / GPU를 윤곽선 3px 라운드의 11px Mono로 적고, 서버 카드와 상세 헤더에 같이 쓰입니다.',
+        note: '상태 다섯 가지를 글리프(체크 · ! · X · 속 빈 원 · 렌치)로 말하는 20px 틴트 링 아이콘. 타임라인 항목과 알림 줄이 같은 컴포넌트를 씁니다. 유형 태그는 CPU / GPU를 윤곽선 3px 라운드의 11px tabular-nums로 적고, 서버 카드와 상세 헤더에 같이 쓰입니다.',
         body: (
           <>
             <div className="space-y-5">

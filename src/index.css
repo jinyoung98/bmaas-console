@@ -1,5 +1,4 @@
 @import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
-@import '@fontsource-variable/jetbrains-mono';
 @import '@fontsource/amaranth/400.css';
 @import 'tailwindcss';
 @import './styles/tokens.css';
@@ -39,9 +38,9 @@
 }
 
 @layer components {
-  /* 호스트명, IP, 스펙 수치. 자릿수가 흔들리지 않게 tabular로 고정 */
+  /* 호스트명, IP, 스펙 수치. 본문과 같은 Pretendard를 쓰되 자릿수가 흔들리지 않게 tabular로 고정 */
   .num {
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
     font-variant-numeric: tabular-nums;
     letter-spacing: 0;
   }
