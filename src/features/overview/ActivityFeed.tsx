@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import { Mono } from '@/components/data/Mono'
 import { Section, SectionHeader } from '@/components/layout/Section'
 import { Button } from '@/components/ui/Button'
+import { cn } from '@/lib/cn'
 import { relativeTime } from '@/lib/format'
 import { STATUS_LABEL, STATUS_TEXT, type ServerStatus } from '@/lib/status'
 import { servers } from '@/mock/servers'
@@ -11,11 +12,18 @@ import type { ActivityEvent, RegionId } from '@/mock/types'
 
 const regionByHostname = new Map<string, RegionId>(servers.map((s) => [s.hostname, s.region]))
 
-// lucide에 없는 두 글리프. 세로선+점, 작은 속 빈 원
+/*
+ * 다섯 글리프가 같은 크기로 읽히도록 맞춘다(선 굵기 포함 외곽, 24 기준): X 14.6, Check 18.6×13.6, ! 높이 17,
+ * 속 빈 원 11.6, Wrench 19.4. 폭이 좁은 !는 높이를, 대각선 모양인 Wrench는 외곽보다 작아 보이는 만큼을 감안했다.
+ */
+
+// lucide에 없는 두 글리프. 세로선+점, 속 빈 원
 function Exclamation(props: LucideProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" {...props}>
-      <path d="M12 6v8M12 18v.01" />
+      <path d="M12 5v9" />
+      {/* 점은 선 끝 캡보다 조금 크게 채운 원으로 그려야 선과 같은 무게로 보인다 */}
+      <circle cx="12" cy="19" r="1.75" fill="currentColor" stroke="none" />
     </svg>
   )
 }
@@ -23,8 +31,20 @@ function Exclamation(props: LucideProps) {
 function Ring(props: LucideProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
-      <circle cx="12" cy="12" r="3.5" />
+      <circle cx="12" cy="12" r="4.5" />
     </svg>
+  )
+}
+
+/** lucide Wrench는 24 칸을 거의 다 써서 다른 글리프보다 커 보인다. 줄인 만큼 선을 굵혀 선 무게는 같게 둔다 */
+const WRENCH_SCALE = 0.86
+function SmallWrench({ className, strokeWidth = 2, ...props }: LucideProps) {
+  return (
+    <Wrench
+      className={cn(className, 'scale-[0.86]')}
+      strokeWidth={Number(strokeWidth) / WRENCH_SCALE}
+      {...props}
+    />
   )
 }
 
@@ -33,7 +53,7 @@ const GLYPH: Record<ServerStatus, ComponentType<LucideProps>> = {
   error: X,
   warning: Exclamation,
   available: Ring,
-  maintenance: Wrench,
+  maintenance: SmallWrench,
 }
 
 /** 배경은 상태색 14%를 bg와 섞은 불투명 색이라 레일이 비치지 않는다. 링은 상태색 30% */

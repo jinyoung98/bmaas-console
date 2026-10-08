@@ -2,7 +2,6 @@ import { BrickGrid } from '@/components/data/BrickGrid'
 import { Meter } from '@/components/data/Meter'
 import { Mono, Value } from '@/components/data/Mono'
 import { Panel, PanelBody, PanelHeader } from '@/components/layout/Panel'
-import { STATUS_BG, STATUS_LABEL, STATUS_ORDER } from '@/lib/status'
 import type { Region, Server } from '@/mock/types'
 
 type Props = { groups: { region: Region; servers: Server[] }[] }
@@ -18,16 +17,6 @@ export function LocationsPanel({ groups }: Props) {
   return (
     <Panel className="flex flex-col">
       <PanelHeader title="Locations" description="각 블록은 서버 한 대, 색은 현재 상태" />
-
-      {/* 색의 뜻을 읽기 전에 먼저 보이도록 위쪽에 둔다. 리전별 개수 줄이 이름을 다시 알려주므로 톤은 낮춘다 */}
-      <div className="grid grid-cols-3 gap-x-3 gap-y-1.5 border-b px-5 py-3">
-        {STATUS_ORDER.map((s) => (
-          <span key={s} className="flex items-center gap-1.5 text-xs text-ink-mute">
-            <span className={`size-2 rounded-[2px] ${STATUS_BG[s]}`} />
-            {STATUS_LABEL[s]}
-          </span>
-        ))}
-      </div>
 
       <PanelBody className="flex-1 space-y-7 md:grid md:grid-cols-2 md:gap-x-10 md:gap-y-7 md:space-y-0 xl:block xl:space-y-7">
         {groups.map(({ region, servers }) => {
