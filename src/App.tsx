@@ -7,6 +7,7 @@ import { ComingSoon } from '@/pages/ComingSoon'
 import DesignSystem from '@/pages/DesignSystem'
 import Overview from '@/pages/Overview'
 import { Placeholder } from '@/pages/Placeholder'
+import ServerDetail from '@/pages/ServerDetail'
 import Servers from '@/pages/Servers'
 
 export default function App() {
@@ -16,10 +17,7 @@ export default function App() {
         <Routes>
           <Route element={<AppShell />}>
             <Route index element={<Overview />} />
-            <Route
-              path="servers/:id"
-              element={<Placeholder eyebrow="Servers" title="Server detail" description="서버 상세 화면입니다." step="6" />}
-            />
+            <Route path="servers/:id" element={<ServerDetail />} />
             <Route path="servers" element={<Servers />} />
             <Route
               path="activity"

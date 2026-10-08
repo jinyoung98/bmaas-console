@@ -63,21 +63,21 @@ const PRESETS = {
     memoryGB: 2048,
     storage: [{ kind: 'NVMe', sizeTB: 3.84, count: 8 }],
     network: { ports: 2, speedGbps: 400 },
-    gpu: { vendor: 'NVIDIA', model: 'H200', count: 8, memoryGB: 141 },
+    gpu: { vendor: 'NVIDIA', model: 'H200', count: 8, memoryGB: 141, memoryType: 'HBM3e', interconnect: 'NVLink 900 GB/s', driver: '550.54' },
   },
   'gpu-mi300x': {
     cpu: { vendor: 'AMD', model: 'EPYC 9654', sockets: 2, coresPerSocket: 96 },
     memoryGB: 1536,
     storage: [{ kind: 'NVMe', sizeTB: 3.84, count: 8 }],
     network: { ports: 2, speedGbps: 400 },
-    gpu: { vendor: 'AMD', model: 'MI300X', count: 8, memoryGB: 192 },
+    gpu: { vendor: 'AMD', model: 'MI300X', count: 8, memoryGB: 192, memoryType: 'HBM3', interconnect: 'Infinity Fabric 896 GB/s', driver: 'ROCm 6.1' },
   },
   'gpu-l40s': {
     cpu: { vendor: 'AMD', model: 'EPYC 9354', sockets: 2, coresPerSocket: 32 },
     memoryGB: 512,
     storage: [{ kind: 'NVMe', sizeTB: 3.84, count: 2 }],
     network: { ports: 2, speedGbps: 100 },
-    gpu: { vendor: 'NVIDIA', model: 'L40S', count: 4, memoryGB: 48 },
+    gpu: { vendor: 'NVIDIA', model: 'L40S', count: 4, memoryGB: 48, memoryType: 'GDDR6', interconnect: 'PCIe Gen4 x16', driver: '550.54' },
   },
 } satisfies Record<string, Preset>
 
@@ -160,6 +160,15 @@ function usageFor(status: ServerStatus, gpu: boolean, rnd: () => number): Usage 
   return { cpu: 0, memory: 0, storage: 0, network: 0 }
 }
 
+/** GPU별 사용률. 평균이 서버 CPU 사용률 근처에 오도록 흩뿌리고, VRAM은 사용률에 비례해 채운다 */
+function gpuUsageFor(gpu: Gpu, cpu: number, rnd: () => number) {
+  return Array.from({ length: gpu.count }, () => {
+    const util = Math.max(3, Math.min(99, Math.round(cpu + (rnd() - 0.5) * 36)))
+    const memoryUsedGB = Math.min(gpu.memoryGB, Math.round(gpu.memoryGB * Math.min(0.97, 0.3 + (util / 100) * 0.62 + (rnd() - 0.5) * 0.12)))
+    return { util, memoryUsedGB }
+  })
+}
+
 function build(): Server[] {
   const out: Server[] = []
   let seed = 7
@@ -184,6 +193,10 @@ function build(): Server[] {
         const storageTB = +preset.storage.reduce((s, d) => s + d.sizeTB * d.count, 0).toFixed(2)
         const cores = preset.cpu.sockets * preset.cpu.coresPerSocket
 
+        // 난수 소비 순서가 바뀌면 기존 화면의 숫자가 달라지므로, 객체 필드의 평가 순서(os → usage)를 그대로 지킨다
+        const os = status === 'available' ? null : osPool[between(rnd, 0, osPool.length - 1)]
+        const usage = usageFor(status, !!preset.gpu, rnd)
+
         out.push({
           id: hostname,
           hostname,
@@ -196,9 +209,10 @@ function build(): Server[] {
           storage: preset.storage,
           storageTB,
           network: preset.network,
-          os: status === 'available' ? null : osPool[between(rnd, 0, osPool.length - 1)],
+          os,
           gpu: preset.gpu,
-          usage: usageFor(status, !!preset.gpu, rnd),
+          gpuUsage: preset.gpu && live ? gpuUsageFor(preset.gpu, usage.cpu, mulberry32(seed * 977)) : undefined,
+          usage,
           uptimeSec,
           monthlyCost: monthlyCostFor(cores, preset.memoryGB, storageTB, regionId, preset.gpu),
           createdAt: NOW - uptimeSec * 1000 - between(rnd, 5, 200) * DAY,

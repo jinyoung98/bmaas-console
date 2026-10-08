@@ -2,6 +2,8 @@ import type { Range } from '@/lib/format'
 import type { Server } from './types'
 
 export type Metric = 'cpu' | 'memory' | 'storage' | 'network'
+/** 서버 상세 전용. 플릿 평균(Overview)에는 GPU가 없다 */
+export type DetailMetric = Metric | 'gpu'
 export type Point = { t: number; v: number }
 
 /** agg: 플릿 전체 값을 어떻게 합쳤는지. 퍼센트는 평균, 대역폭은 서버마다 회선 속도가 달라 합계 */
@@ -13,6 +15,17 @@ export const METRICS: Record<Metric, { label: string; unit: string; percent: boo
 }
 
 export const METRIC_ORDER: Metric[] = ['cpu', 'memory', 'storage', 'network']
+
+export type MetricInfo = { label: string; unit: string; percent: boolean; agg?: string }
+
+/** 서버 한 대 기준. 네트워크는 그 서버의 사용 대역폭(Gbps) */
+export const DETAIL_METRICS: Record<DetailMetric, MetricInfo> = {
+  cpu: { label: 'CPU', unit: '%', percent: true },
+  memory: { label: 'Memory', unit: '%', percent: true },
+  gpu: { label: 'GPU', unit: '%', percent: true },
+  storage: { label: 'Storage', unit: '%', percent: true },
+  network: { label: 'Network', unit: 'Gbps', percent: false },
+}
 
 const STEP: Record<Range, { points: number; ms: number }> = {
   '1h': { points: 60, ms: 60_000 },
@@ -37,11 +50,11 @@ const DAY = 86_400_000
  * 현재 평균값(mean)에 맞춰 하루 주기의 파동과 잡음을 얹은 시계열.
  * 끝점이 항상 mean 근처라서 "지금 값"과 차트가 어긋나지 않는다.
  */
-export function getSeries(metric: Metric, range: Range, mean: number, seed = 1): Point[] {
+export function getSeries(metric: DetailMetric, range: Range, mean: number, seed = 1): Point[] {
   const { points, ms } = STEP[range]
   const rnd = mulberry32(seed * 131 + points + metric.length * 17)
   const end = Math.floor(Date.now() / ms) * ms
-  const percent = METRICS[metric].percent
+  const percent = DETAIL_METRICS[metric].percent
   const amp = metric === 'storage' ? 0 : mean * 0.12
   const noise = metric === 'storage' ? 0.15 : mean * 0.045
   const max = percent ? 98 : Infinity
@@ -78,4 +91,27 @@ export function fleetMeans(servers: Server[]): Record<Metric, number> {
     storage: +avg((s) => s.usage.storage).toFixed(1),
     network: +(live.reduce((sum, s) => sum + (s.usage.network / 100) * s.network.ports * s.network.speedGbps, 0) / 1000).toFixed(1),
   }
+}
+
+/** 서버 id를 시계열 시드로 쓴다. 같은 서버는 새로고침해도 같은 곡선이 나온다 */
+function seedOf(id: string) {
+  return [...id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 9973, 7)
+}
+
+/** 서버 한 대의 현재 지표값. 퍼센트는 그대로, GPU는 GPU 평균, 네트워크는 Gbps */
+export function serverMeans(s: Server): Record<DetailMetric, number> {
+  const gpu = s.gpuUsage?.length ? s.gpuUsage.reduce((a, g) => a + g.util, 0) / s.gpuUsage.length : 0
+  return {
+    cpu: s.usage.cpu,
+    memory: s.usage.memory,
+    gpu: +gpu.toFixed(1),
+    storage: s.usage.storage,
+    network: +((s.usage.network / 100) * s.network.ports * s.network.speedGbps).toFixed(1),
+  }
+}
+
+/** 서버 단위 시계열. 지표마다 시드를 달리해 곡선이 서로 닮지 않게 한다 */
+export function serverSeries(s: Server, metric: DetailMetric, range: Range): Point[] {
+  const order: DetailMetric[] = ['cpu', 'memory', 'storage', 'network', 'gpu']
+  return getSeries(metric, range, serverMeans(s)[metric], seedOf(s.id) * 10 + order.indexOf(metric) + 1)
 }

@@ -1,5 +1,17 @@
 export type Range = '1h' | '24h' | '7d'
 
+/** 기간 전환(1h/24h/7d)의 선택지와 설명 문구. 사용률·모니터링·트래픽 패널이 같이 쓴다 */
+export const RANGES = [
+  { value: '1h', label: '1h' },
+  { value: '24h', label: '24h' },
+  { value: '7d', label: '7d' },
+] as const
+
+export const RANGE_LABEL: Record<Range, string> = { '1h': '최근 1시간', '24h': '최근 24시간', '7d': '최근 7일' }
+
+/** 며칠 지났는지(내림). 음수는 0 */
+export const daysSince = (at: number, now = Date.now()) => Math.max(0, Math.floor((now - at) / 86_400_000))
+
 /** "12분 전", "3시간 전", "어제". 서비스 전체가 같은 말투를 쓰도록 한 곳에서 만든다 */
 export function relativeTime(at: number, now = Date.now()) {
   const m = Math.round((now - at) / 60_000)

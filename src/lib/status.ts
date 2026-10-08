@@ -45,3 +45,7 @@ export const STATUS_BADGE: Record<ServerStatus, string> = {
   warning: 'bg-st-warning/12 text-st-warning',
   error: 'bg-st-error/12 text-st-error',
 }
+
+/** 헤더 아래 알림 줄이 필요한 상태 */
+export type NoticeStatus = Extract<ServerStatus, 'warning' | 'error' | 'maintenance'>
+export const isNoticeStatus = (s: ServerStatus): s is NoticeStatus => s === 'warning' || s === 'error' || s === 'maintenance'

@@ -11,7 +11,19 @@ export type Region = {
 
 export type Drive = { kind: 'NVMe' | 'SSD'; sizeTB: number; count: number }
 
-export type Gpu = { vendor: 'NVIDIA' | 'AMD'; model: string; count: number; memoryGB: number }
+export type Gpu = {
+  vendor: 'NVIDIA' | 'AMD'
+  model: string
+  count: number
+  memoryGB: number
+  /** GPU 사이를 잇는 링크. 상세 Hardware 탭에만 쓴다 */
+  memoryType: string
+  interconnect: string
+  driver: string
+}
+
+/** GPU 한 장의 현재 사용률(%)과 사용 중인 VRAM(GB) */
+export type GpuUsage = { util: number; memoryUsedGB: number }
 
 export type Usage = { cpu: number; memory: number; storage: number; network: number }
 
@@ -31,6 +43,8 @@ export type Server = {
   /** 배포 전(Available)에는 OS가 없다 */
   os: string | null
   gpu?: Gpu
+  /** GPU 개수만큼. 켜져 있는(running/warning) GPU 서버에만 있다 */
+  gpuUsage?: GpuUsage[]
   usage: Usage
   uptimeSec: number
   /** 월 이용료(원). 계약 단가라 사용률과 상관없이 고정 */

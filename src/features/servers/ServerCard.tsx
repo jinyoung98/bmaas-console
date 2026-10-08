@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router'
 import { Meter } from '@/components/data/Meter'
 import { Mono, Value } from '@/components/data/Mono'
+import { TypeTag } from '@/components/data/TypeTag'
 import { cn } from '@/lib/cn'
 import { formatKRW } from '@/lib/format'
 import { isLiveStatus, STATUS_BG, STATUS_LABEL, STATUS_TEXT, type ServerStatus } from '@/lib/status'
@@ -79,9 +80,7 @@ export function ServerCard({ server: s, className }: { server: Server; className
         </span>
         <span className="flex items-center gap-[8px]">
           <span className="hidden text-xs text-ink-soft @[480px]:inline">{regionById[s.region].city}</span>
-          <span className="num rounded-[3px] border border-line-strong px-[5px] text-[11px] leading-[16px] text-ink-soft">
-            {s.gpu ? 'GPU' : 'CPU'}
-          </span>
+          <TypeTag gpu={!!s.gpu} />
         </span>
       </header>
 

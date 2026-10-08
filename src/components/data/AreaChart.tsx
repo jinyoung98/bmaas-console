@@ -1,4 +1,4 @@
-import { Area, AreaChart as RAreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { Area, AreaChart as RAreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { useId, type ReactNode } from 'react'
 import { Value } from './Mono'
 
@@ -15,12 +15,14 @@ type Props = {
   formatTooltipTime: (t: number) => ReactNode
   /** 값 축 눈금 표기 */
   formatAxis?: (v: number) => string
+  /** 알림 기준선. 점선으로 가로지른다 */
+  threshold?: number
 }
 
 const AXIS_TICK = { fill: 'var(--ink-mute)', fontSize: 11, fontFamily: 'var(--font-mono)' }
 
 /** Recharts를 토큰 색으로 재스타일한 단색 영역 차트 */
-export function AreaChart({ data, height, domain = [0, 100], unit, formatTick, formatTooltipTime, formatAxis }: Props) {
+export function AreaChart({ data, height, domain = [0, 100], unit, formatTick, formatTooltipTime, formatAxis, threshold }: Props) {
   const id = useId()
 
   return (
@@ -55,6 +57,9 @@ export function AreaChart({ data, height, domain = [0, 100], unit, formatTick, f
             tickFormatter={formatAxis}
             tickCount={5}
           />
+          {threshold !== undefined && (
+            <ReferenceLine y={threshold} stroke="var(--st-warning)" strokeDasharray="4 4" strokeOpacity={0.7} />
+          )}
           <Tooltip
             cursor={{ stroke: 'var(--line-strong)' }}
             isAnimationActive={false}

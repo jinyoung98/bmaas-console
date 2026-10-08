@@ -1,84 +1,55 @@
-import { ArrowDownRight, ArrowUpRight } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { AreaChart } from '@/components/data/AreaChart'
-import { Value } from '@/components/data/Mono'
-import { Sparkline } from '@/components/data/Sparkline'
+import { MetricTabs } from '@/components/data/MetricTabs'
 import { Panel, PanelHeader } from '@/components/layout/Panel'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
-import { cn } from '@/lib/cn'
-import { formatClock, type Range } from '@/lib/format'
-import { getSeries, METRIC_ORDER, METRICS, seriesChange, type Metric } from '@/mock/metrics'
+import { formatClock, RANGE_LABEL, RANGES, type Range } from '@/lib/format'
+import { getSeries, METRIC_ORDER, METRICS, type MetricInfo, type Point } from '@/mock/metrics'
 
-type Props = { means: Record<Metric, number> }
-
-const RANGES = [
-  { value: '1h', label: '1h' },
-  { value: '24h', label: '24h' },
-  { value: '7d', label: '7d' },
-] as const
-
-const RANGE_LABEL: Record<Range, string> = { '1h': '최근 1시간', '24h': '최근 24시간', '7d': '최근 7일' }
+type Props<K extends string> = {
+  means: Record<K, number>
+  /** 기본은 플릿 평균(Overview). 서버 상세는 그 서버의 지표와 시계열을 넘긴다 */
+  keys?: K[]
+  info?: Record<K, MetricInfo>
+  getData?: (key: K, range: Range, index: number) => Point[]
+  title?: string
+  description?: (rangeLabel: string) => string
+}
 
 /** 네 지표를 카드로 나열하지 않고, 한 패널 안의 탭처럼 묶어서 하나의 차트를 바꿔 보여준다 */
-export function UtilizationPanel({ means }: Props) {
-  const [metric, setMetric] = useState<Metric>('cpu')
+export function UtilizationPanel<K extends string = 'cpu' | 'memory' | 'storage' | 'network'>({
+  means,
+  keys = METRIC_ORDER as unknown as K[],
+  info = METRICS as unknown as Record<K, MetricInfo>,
+  getData = (m, range, i) => getSeries(m as never, range, means[m], i + 1),
+  title = 'Resource utilization',
+  description = (label) => `${label} · 가동 중인 서버 기준`,
+}: Props<K>) {
+  const [metric, setMetric] = useState<K>(keys[0])
   const [range, setRange] = useState<Range>('24h')
 
-  const series = useMemo(
-    () => Object.fromEntries(METRIC_ORDER.map((m, i) => [m, getSeries(m, range, means[m], i + 1)])) as Record<Metric, ReturnType<typeof getSeries>>,
-    [means, range],
-  )
-  const info = METRICS[metric]
+  // 지표 정의는 호출하는 쪽에서 모듈 상수로 넘기므로 의존성에 넣어도 다시 계산되지 않는다
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const series = useMemo(() => Object.fromEntries(keys.map((m, i) => [m, getData(m, range, i)])) as Record<K, Point[]>, [means, range])
   const data = series[metric]
-  const isPercent = info.percent
+  const isPercent = info[metric].percent
 
   return (
     <Panel className="flex flex-col">
       <PanelHeader
-        title="Resource utilization"
-        description={`${RANGE_LABEL[range]} · 가동 중인 서버 기준`}
+        title={title}
+        description={description(RANGE_LABEL[range])}
         actions={<SegmentedControl value={range} onValueChange={setRange} options={[...RANGES]} />}
       />
 
-      <div className="grid grid-cols-2 divide-x divide-y border-b sm:grid-cols-4 sm:divide-y-0">
-        {METRIC_ORDER.map((m) => {
-          const d = series[m]
-          const change = seriesChange(d, METRICS[m].percent)
-          const active = m === metric
-          return (
-            <button
-              key={m}
-              type="button"
-              onClick={() => setMetric(m)}
-              aria-pressed={active}
-              className={cn(
-                "relative cursor-pointer px-5 py-4 text-left transition-colors hover:bg-accent-subtle after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-accent after:transition-opacity after:content-['']",
-                active ? 'bg-accent-subtle after:opacity-100' : 'after:opacity-0',
-              )}
-            >
-              <span className="text-xs text-ink-mute">
-                {METRICS[m].label} <span className="opacity-60">· {METRICS[m].agg}</span>
-              </span>
-              <span className="mt-1 flex items-end justify-between gap-2">
-                <Value value={means[m]} unit={METRICS[m].unit} className="text-xl font-semibold tracking-tight" />
-                <Sparkline data={d.map((p) => p.v)} width={56} height={22} className={active ? 'text-accent' : 'text-ink-mute'} />
-              </span>
-              <span className="num mt-1 flex items-center gap-0.5 text-xs text-ink-mute">
-                {change >= 0 ? <ArrowUpRight className="size-3" /> : <ArrowDownRight className="size-3" />}
-                {Math.abs(change).toFixed(1)}
-                {METRICS[m].percent ? '%p' : '%'}
-              </span>
-            </button>
-          )
-        })}
-      </div>
+      <MetricTabs keys={keys} info={info} means={means} series={series} active={metric} onSelect={setMetric} />
 
       {/* 옆 패널(Locations)이 더 길면 차트가 그만큼 늘어나서 두 패널의 바닥이 맞는다 */}
       <div className="relative min-h-[300px] flex-1">
         <div className="absolute inset-x-4 bottom-4 top-5">
           <AreaChart
             data={data}
-            unit={info.unit}
+            unit={info[metric].unit}
             domain={isPercent ? [0, 100] : [0, 'auto']}
             formatAxis={isPercent ? (v) => `${v}%` : undefined}
             formatTick={(t) => formatClock(t, range)}
