@@ -1,4 +1,4 @@
-# BRICKSUM Console
+# BMaaS Console
 
 베어메탈 서버를 대여해 주는 BRICKSUM의 고객사 관리자 콘솔 UI입니다. 백엔드 없이 mock 데이터로 동작하는 프론트엔드 시안입니다.
 
