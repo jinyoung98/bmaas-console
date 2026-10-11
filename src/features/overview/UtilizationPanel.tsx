@@ -3,7 +3,7 @@ import { AreaChart } from '@/components/data/AreaChart'
 import { MetricTabs } from '@/components/data/MetricTabs'
 import { Panel, PanelHeader } from '@/components/layout/Panel'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
-import { formatClock, RANGE_LABEL, RANGES, type Range } from '@/lib/format'
+import { formatClock, RANGES, type Range } from '@/lib/format'
 import { getSeries, METRIC_ORDER, METRICS, type MetricInfo, type Point } from '@/mock/metrics'
 
 type Props<K extends string> = {
@@ -13,7 +13,6 @@ type Props<K extends string> = {
   info?: Record<K, MetricInfo>
   getData?: (key: K, range: Range, index: number) => Point[]
   title?: string
-  description?: (rangeLabel: string) => string
 }
 
 /** 네 지표를 카드로 나열하지 않고, 한 패널 안의 탭처럼 묶어서 하나의 차트를 바꿔 보여준다 */
@@ -23,7 +22,6 @@ export function UtilizationPanel<K extends string = 'cpu' | 'memory' | 'storage'
   info = METRICS as unknown as Record<K, MetricInfo>,
   getData = (m, range, i) => getSeries(m as never, range, means[m], i + 1),
   title = 'Resource utilization',
-  description = (label) => `${label} · 가동 중인 서버 기준`,
 }: Props<K>) {
   const [metric, setMetric] = useState<K>(keys[0])
   const [range, setRange] = useState<Range>('24h')
@@ -38,7 +36,6 @@ export function UtilizationPanel<K extends string = 'cpu' | 'memory' | 'storage'
     <Panel className="flex flex-col">
       <PanelHeader
         title={title}
-        description={description(RANGE_LABEL[range])}
         actions={<SegmentedControl value={range} onValueChange={setRange} options={[...RANGES]} />}
       />
 

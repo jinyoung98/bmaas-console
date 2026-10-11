@@ -71,7 +71,6 @@ export default function Servers() {
     <EmptyState
       icon={SearchX}
       title="조건에 맞는 서버가 없습니다"
-      description="검색어나 상태, 리전 조건을 바꿔 보세요."
       action={<Button onClick={reset}>필터 초기화</Button>}
     />
   )
@@ -80,7 +79,6 @@ export default function Servers() {
     <>
       <PageHeader
         title="Servers"
-        description="베어메탈 서버를 관리합니다."
         actions={
           <Button variant="primary">
             <Plus /> Create server

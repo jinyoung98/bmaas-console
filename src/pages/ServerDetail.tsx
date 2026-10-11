@@ -50,7 +50,6 @@ export default function ServerDetail() {
           <EmptyState
             icon={ServerOff}
             title="서버를 찾을 수 없습니다"
-            description="주소가 바뀌었거나 해제된 서버일 수 있습니다."
             action={
               <Button asChild>
                 <Link to="/servers">Servers로 돌아가기</Link>

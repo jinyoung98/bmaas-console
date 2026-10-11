@@ -401,7 +401,6 @@ export default function DesignSystem() {
               <EmptyState
                 icon={Inbox}
                 title="조건에 맞는 서버가 없습니다"
-                description="검색어나 필터를 바꿔 보세요."
                 action={<Button>필터 초기화</Button>}
               />
             </div>
@@ -493,12 +492,12 @@ export default function DesignSystem() {
     blocks: [
       {
         title: 'Panel vs Section',
-        note: 'Panel + PanelHeader / Section + SectionHeader. Panel은 제목줄이 있는 선 박스로, 표와 차트처럼 구조가 있는 데이터를 담습니다. Section은 박스 없이 페이지 위에 바로 놓이는 요약이나 목록입니다. 모든 영역이 같은 박스로 보이지 않게 해서 중요도를 나눕니다.',
+        note: 'Panel + PanelHeader / Section + SectionHeader. Panel은 제목줄이 있는 선 박스로, 표와 차트처럼 구조가 있는 데이터를 담습니다. Section은 박스 없이 페이지 위에 바로 놓이는 요약이나 목록입니다. 모든 영역이 같은 박스로 보이지 않게 해서 중요도를 나눕니다. 제목 밑에 설명 문장을 붙이지 않습니다. 제목이 이름이고, 범위나 단위처럼 꼭 필요한 값은 오른쪽 actions(기간 선택, 값)에 둡니다.',
         body: (
           <>
             <div className="grid gap-5 lg:grid-cols-2">
               <Panel>
-                <PanelHeader title="Panel" description="표, 차트" />
+                <PanelHeader title="Panel" />
                 <PanelBody className="text-sm text-ink-soft">Recent servers, Utilization, Locations</PanelBody>
               </Panel>
               <Section className="border-t pt-4">
@@ -667,7 +666,6 @@ export default function DesignSystem() {
     <div style={{ '--design-sticky': `${stickyH}px` } as React.CSSProperties}>
       <PageHeader
         title="디자인 시스템"
-        description="브릭섬 브랜드에서 가져온 토큰과, 모든 화면이 조립되는 컴포넌트입니다."
       />
 
       {/* 층 탭은 main 스크롤 안에서 위에 붙는다. 좁은 폭에서는 블록 선택 메뉴가 같이 붙는다 */}

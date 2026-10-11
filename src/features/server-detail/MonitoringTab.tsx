@@ -4,7 +4,7 @@ import { MetricTabs } from '@/components/data/MetricTabs'
 import { Value } from '@/components/data/Mono'
 import { Panel, PanelHeader } from '@/components/layout/Panel'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
-import { formatClock, RANGE_LABEL, RANGES, type Range } from '@/lib/format'
+import { formatClock, RANGES, type Range } from '@/lib/format'
 import { isLiveStatus } from '@/lib/status'
 import { DETAIL_METRICS, serverMeans, serverSeries, type DetailMetric, type Point } from '@/mock/metrics'
 import type { Server } from '@/mock/types'
@@ -48,7 +48,6 @@ export function MonitoringTab({ server: s }: { server: Server }) {
     <Panel>
       <PanelHeader
         title="Monitoring"
-        description={`${RANGE_LABEL[range]} · ${s.hostname}`}
         actions={<SegmentedControl value={range} onValueChange={setRange} options={[...RANGES]} />}
       />
       <MetricTabs

@@ -5,7 +5,7 @@ import { cn } from '@/lib/cn'
 type Props = {
   icon: LucideIcon
   title: string
-  description: string
+  description?: string
   action?: ReactNode
   className?: string
 }
@@ -18,8 +18,8 @@ export function EmptyState({ icon: Icon, title, description, action, className }
         <Icon className="size-5" strokeWidth={1.5} />
       </span>
       <h3 className="mt-4 text-base font-semibold">{title}</h3>
-      <p className="mt-1 max-w-sm text-sm text-ink-soft">{description}</p>
-      {action && <div className="mt-5">{action}</div>}
+      {description && <p className="mt-1 max-w-sm text-sm text-ink-soft">{description}</p>}
+      {action && <div className={description ? 'mt-5' : 'mt-4'}>{action}</div>}
     </div>
   )
 }

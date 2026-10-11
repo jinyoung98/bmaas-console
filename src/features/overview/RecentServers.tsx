@@ -13,7 +13,6 @@ export function RecentServers({ servers }: { servers: Server[] }) {
     <Panel className="h-full">
       <PanelHeader
         title="Recent servers"
-        description="최근에 변경된 서버"
         actions={
           <Button asChild variant="ghost" size="sm">
             <Link to="/servers">

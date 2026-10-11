@@ -90,7 +90,6 @@ export function OverviewTab({ server: s }: { server: Server }) {
               keys={OVERVIEW_KEYS}
               info={DETAIL_METRICS}
               getData={(m, range) => serverSeries(s, m, range)}
-              description={(label) => `${label} · ${s.hostname}`}
             />
             <GpuPanel server={s} />
           </>

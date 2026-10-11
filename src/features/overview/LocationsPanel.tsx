@@ -16,7 +16,7 @@ export const RACK_SIZE = 8
 export function LocationsPanel({ groups }: Props) {
   return (
     <Panel className="flex flex-col">
-      <PanelHeader title="Locations" description="각 블록은 서버 한 대, 색은 현재 상태" />
+      <PanelHeader title="Locations" />
 
       <PanelBody className="flex-1 space-y-7 md:grid md:grid-cols-2 md:gap-x-10 md:gap-y-7 md:space-y-0 xl:block xl:space-y-7">
         {groups.map(({ region, servers }) => {

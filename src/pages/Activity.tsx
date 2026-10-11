@@ -9,7 +9,7 @@ import { OpenIssues } from '@/features/activity/OpenIssues'
 import { ActivityToolbar } from '@/features/activity/ActivityToolbar'
 import { activityGroupBy, activityGroupedColumns, activityListColumns } from '@/features/activity/activityColumns'
 import { useActivityQuery } from '@/features/activity/useActivityQuery'
-import { STATUS_LABEL, STATUS_ORDER } from '@/lib/status'
+import { STATUS_ORDER } from '@/lib/status'
 import { activity } from '@/mock/activity'
 import { filterActivity, openIssues } from '@/mock/selectors'
 import type { ActivityEvent } from '@/mock/types'
@@ -55,7 +55,6 @@ export default function ActivityPage() {
     <>
       <PageHeader
         title="Activity"
-        description="서버에서 일어난 모든 이벤트입니다."
         actions={
           <Button onClick={() => exportCsv(filtered)} disabled={filtered.length === 0}>
             <Download /> 내보내기
@@ -96,7 +95,6 @@ export default function ActivityPage() {
               <EmptyState
                 icon={SearchX}
                 title="조건에 맞는 이벤트가 없습니다"
-                description={`검색어나 ${STATUS_LABEL.running} 같은 심각도, 서버, 기간 조건을 바꿔 보세요.`}
                 action={<Button onClick={reset}>필터 초기화</Button>}
               />
             }

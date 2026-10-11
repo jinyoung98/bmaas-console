@@ -7,8 +7,6 @@ export const RANGES = [
   { value: '7d', label: '7d' },
 ] as const
 
-export const RANGE_LABEL: Record<Range, string> = { '1h': '최근 1시간', '24h': '최근 24시간', '7d': '최근 7일' }
-
 /** 며칠 지났는지(내림). 음수는 0 */
 export const daysSince = (at: number, now = Date.now()) => Math.max(0, Math.floor((now - at) / 86_400_000))
 

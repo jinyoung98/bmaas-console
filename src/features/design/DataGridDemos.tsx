@@ -151,7 +151,6 @@ export function DataGridVariants() {
               <EmptyState
                 icon={SearchX}
                 title="조건에 맞는 서버가 없습니다"
-                description="검색어나 상태, 리전 조건을 바꿔 보세요."
                 action={<Button>필터 초기화</Button>}
               />
             }
@@ -193,7 +192,6 @@ export function ServersListPattern() {
     <EmptyState
       icon={SearchX}
       title="조건에 맞는 서버가 없습니다"
-      description="검색어나 상태, 리전 조건을 바꿔 보세요."
       action={<Button onClick={reset}>필터 초기화</Button>}
     />
   )

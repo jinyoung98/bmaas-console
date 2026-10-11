@@ -26,7 +26,6 @@ export default function Overview() {
     <>
       <PageHeader
         title="Overview"
-        description="내 인프라의 현재 상태를 한눈에 확인합니다."
         actions={
           <Button variant="primary">
             <Plus /> Create server

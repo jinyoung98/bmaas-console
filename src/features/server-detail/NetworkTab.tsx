@@ -9,7 +9,7 @@ import { Panel, PanelBody, PanelHeader } from '@/components/layout/Panel'
 import { Button } from '@/components/ui/Button'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
 import { cn } from '@/lib/cn'
-import { formatClock, RANGE_LABEL, RANGES, type Range } from '@/lib/format'
+import { formatClock, RANGES, type Range } from '@/lib/format'
 import { isLiveStatus } from '@/lib/status'
 import { serverSeries } from '@/mock/metrics'
 import { serverInterfaces, serverNetworkInfo, serverSshKeys } from '@/mock/selectors'
@@ -74,7 +74,6 @@ function Traffic({ server: s }: { server: Server }) {
     <Panel>
       <PanelHeader
         title="Traffic"
-        description={`${RANGE_LABEL[range]} · 사용 대역폭`}
         actions={<SegmentedControl value={range} onValueChange={setRange} options={[...RANGES]} />}
       />
       <div role="img" aria-label="네트워크 사용 대역폭 추이" className="px-[16px] pb-[16px] pt-[20px]">

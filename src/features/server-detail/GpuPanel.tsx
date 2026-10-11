@@ -8,7 +8,14 @@ export function GpuPanel({ server: s }: { server: Server }) {
   if (!s.gpu || !s.gpuUsage) return null
   return (
     <Panel>
-      <PanelHeader title="GPU" description={`${s.gpu.count}× ${s.gpu.vendor} ${s.gpu.model} · ${s.gpu.memoryGB} GB ${s.gpu.memoryType}`} />
+      <PanelHeader
+        title="GPU"
+        actions={
+          <Mono className="text-xs text-ink-mute">
+            {s.gpu.count}× {s.gpu.vendor} {s.gpu.model} · {s.gpu.memoryGB} GB {s.gpu.memoryType}
+          </Mono>
+        }
+      />
       <ul className="grid grid-cols-2 gap-[12px] p-[16px] md:grid-cols-4">
         {s.gpuUsage.map((g, i) => (
           <li key={i} className="rounded-md border bg-raised p-[12px]">
