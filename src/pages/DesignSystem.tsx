@@ -15,9 +15,11 @@ import { PageHeader } from '@/components/common/PageHeader'
 import { Panel, PanelBody, PanelHeader } from '@/components/layout/Panel'
 import { Section, SectionHeader } from '@/components/layout/Section'
 import { Button } from '@/components/ui/Button'
+import { Combobox } from '@/components/ui/Combobox'
 import { Input } from '@/components/ui/Input'
 import { Kbd } from '@/components/ui/Kbd'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
+import { Select } from '@/components/ui/Select'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { Tooltip } from '@/components/ui/Tooltip'
@@ -121,6 +123,8 @@ export default function DesignSystem() {
   const [tab, setTab] = useState('all')
   const [view, setView] = useState<'table' | 'grid'>('table')
   const [range, setRange] = useState('24h')
+  const [location, setLocation] = useState<string | null>(null)
+  const [host, setHost] = useState<string | null>('bm-seoul-03')
   const [params, setParams] = useSearchParams()
   const { hash } = useLocation()
   const navigate = useNavigate()
@@ -275,6 +279,45 @@ export default function DesignSystem() {
                 </TabsTrigger>
               </TabsList>
             </Tabs>
+          </>
+        ),
+      },
+      {
+        title: 'Select & Combobox',
+        note: '필터용 선택 상자. 둘 다 32px 높이의 같은 트리거(테두리 버튼 + 값 + ▾)를 쓰고, 값이 없으면 "모든 ~"이라고 적힙니다. 메뉴 맨 위가 "전체" 항목이라 한 번에 필터를 풀 수 있습니다. 항목이 몇 개 안 되면 Select(Servers의 위치 4곳), 열 개가 넘어 찾아야 하면 Combobox(Activity의 서버 48대)를 씁니다. 값 오른쪽의 흐린 글씨는 보조값(위치 id)이고 닫힌 트리거에도 같이 보입니다.',
+        body: (
+          <>
+            <div className="flex flex-wrap items-start gap-10">
+              <Variant label="Select · 전체">
+                <Select
+                  value={null}
+                  onChange={() => {}}
+                  allLabel="모든 위치"
+                  align="start"
+                  options={regions.map((r) => ({ value: r.id, label: r.city, hint: r.id }))}
+                />
+              </Variant>
+              <Variant label="Select · 선택됨">
+                <Select
+                  value={location}
+                  onChange={setLocation}
+                  allLabel="모든 위치"
+                  align="start"
+                  options={regions.map((r) => ({ value: r.id, label: r.city, hint: r.id }))}
+                />
+              </Variant>
+              <Variant label="Combobox · 검색">
+                <Combobox
+                  value={host}
+                  onChange={setHost}
+                  allLabel="모든 서버"
+                  searchPlaceholder="서버 검색"
+                  emptyText="일치하는 서버가 없습니다"
+                  align="start"
+                  options={servers.map((s) => ({ value: s.hostname, label: s.hostname }))}
+                />
+              </Variant>
+            </div>
           </>
         ),
       },

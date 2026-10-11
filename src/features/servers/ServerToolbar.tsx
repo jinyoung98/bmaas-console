@@ -1,23 +1,14 @@
-import { ChevronDown, LayoutGrid, List, Search } from 'lucide-react'
+import { LayoutGrid, List, Search } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Value } from '@/components/data/Mono'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/DropdownMenu'
 import { Input } from '@/components/ui/Input'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
+import { Select } from '@/components/ui/Select'
 import { cn } from '@/lib/cn'
 import { STATUS_BG, STATUS_LABEL, STATUS_ORDER, type ServerStatus } from '@/lib/status'
-import { regionById, regions } from '@/mock/regions'
+import { regions } from '@/mock/regions'
 import type { RegionId } from '@/mock/types'
 import type { ServerView } from './useServerQuery'
-
-const ALL = 'all'
 
 type Props = {
   q: string
@@ -79,39 +70,12 @@ export function ServerToolbar(props: Props) {
         <div className="ml-auto flex items-center gap-[8px]">
           {extra}
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                type="button"
-                className="flex h-[32px] cursor-pointer items-center gap-[8px] whitespace-nowrap rounded-sm border bg-raised px-[10px] text-sm text-ink-soft transition-colors hover:border-line-strong data-[state=open]:border-line-strong"
-              >
-                {region ? (
-                  <>
-                    {regionById[region].city}
-                    <span className="num text-xs text-ink-mute">{region}</span>
-                  </>
-                ) : (
-                  '모든 위치'
-                )}
-                <ChevronDown className="size-[14px] text-ink-mute" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuRadioGroup
-                value={region ?? ALL}
-                onValueChange={(v) => onRegion(v === ALL ? null : (v as RegionId))}
-              >
-                <DropdownMenuRadioItem value={ALL}>모든 위치</DropdownMenuRadioItem>
-                <DropdownMenuSeparator />
-                {regions.map((r) => (
-                  <DropdownMenuRadioItem key={r.id} value={r.id}>
-                    {r.city}
-                    <span className="num ml-auto text-xs text-ink-mute">{r.id}</span>
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Select
+            value={region}
+            onChange={onRegion}
+            allLabel="모든 위치"
+            options={regions.map((r) => ({ value: r.id, label: r.city, hint: r.id }))}
+          />
 
           <SegmentedControl
             value={view}
