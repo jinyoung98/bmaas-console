@@ -83,7 +83,7 @@ const PRESETS = {
 
 type PresetKey = keyof typeof PRESETS
 
-/** 리전별 구성. 합계 48대 */
+/** 위치별 구성. 합계 48대 */
 const LAYOUT: Record<RegionId, [PresetKey, number][]> = {
   'kr-seoul-1': [['general-a', 6], ['general-b', 4], ['memory', 2], ['gpu-l40s', 3], ['storage', 1]],
   'kr-gwangju-1': [['gpu-h200', 4], ['gpu-mi300x', 2], ['general-a', 3], ['compute-hi', 3], ['storage', 2]],
@@ -127,7 +127,7 @@ const GPU_BASE: Record<string, { count: number; price: number }> = {
   MI300X: { count: 8, price: 14_500_000 },
 }
 
-/** 리전 계수. 지역별 전력·회선 단가 차이 */
+/** 위치 계수. 지역별 전력·회선 단가 차이 */
 const REGION_FACTOR: Record<RegionId, number> = {
   'kr-seoul-1': 1,
   'kr-gwangju-1': 0.97,
@@ -135,7 +135,7 @@ const REGION_FACTOR: Record<RegionId, number> = {
   'jp-tokyo-1': 1.08,
 }
 
-// 월 비용 = (기본가 + 스토리지 TB × 40,000) × 리전 계수, 1,000원 단위 반올림. 기본가: CPU = cores×9,800 + memoryGB×2,100, GPU = GPU_BASE(개수 비례)
+// 월 비용 = (기본가 + 스토리지 TB × 40,000) × 위치 계수, 1,000원 단위 반올림. 기본가: CPU = cores×9,800 + memoryGB×2,100, GPU = GPU_BASE(개수 비례)
 function monthlyCostFor(cores: number, memoryGB: number, storageTB: number, region: RegionId, gpu?: Gpu) {
   const gpuBase = gpu && GPU_BASE[gpu.model]
   const base = gpu && gpuBase ? (gpuBase.price * gpu.count) / gpuBase.count : cores * 9800 + memoryGB * 2100

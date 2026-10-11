@@ -58,7 +58,7 @@ function Chip({ on, onClick, swatch, label, count }: { on: boolean; onClick: () 
 }
 
 /**
- * 2행 툴바. 1행은 왼쪽 검색, 오른쪽 보기 설정 묶음(Columns · 리전 · Table/Grid)으로, 줄이 바뀌어도 묶음은 흩어지지 않는다.
+ * 2행 툴바. 1행은 왼쪽 검색, 오른쪽 보기 설정 묶음(Columns · 위치 · Table/Grid)으로, 줄이 바뀌어도 묶음은 흩어지지 않는다.
  * 2행은 상태 칩 5개와 GPU 칩. 칩은 Overview Fleet status 칩과 같은 생김새이고, 누르면 필터가 켜지고 꺼진다.
  */
 export function ServerToolbar(props: Props) {
@@ -91,7 +91,7 @@ export function ServerToolbar(props: Props) {
                     <span className="num text-xs text-ink-mute">{region}</span>
                   </>
                 ) : (
-                  '모든 리전'
+                  '모든 위치'
                 )}
                 <ChevronDown className="size-[14px] text-ink-mute" />
               </button>
@@ -101,7 +101,7 @@ export function ServerToolbar(props: Props) {
                 value={region ?? ALL}
                 onValueChange={(v) => onRegion(v === ALL ? null : (v as RegionId))}
               >
-                <DropdownMenuRadioItem value={ALL}>모든 리전</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value={ALL}>모든 위치</DropdownMenuRadioItem>
                 <DropdownMenuSeparator />
                 {regions.map((r) => (
                   <DropdownMenuRadioItem key={r.id} value={r.id}>

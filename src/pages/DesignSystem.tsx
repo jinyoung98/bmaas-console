@@ -167,7 +167,7 @@ export default function DesignSystem() {
       },
       {
         title: 'Typography',
-        note: '글꼴은 Pretendard 하나입니다. 호스트명, IP, 수치 같은 서버가 말하는 값은 같은 글꼴에 tabular-nums(자릿수 폭 고정)를 켜서 표에서 세로로 맞습니다. 스케일은 12 / 13 / 14 / 16 / 20 / 24 / 32. 예외로 11px는 상태 라벨과 2단 셀의 보조줄(리전 id, CPU 모델), 단축키 표시에만 씁니다.',
+        note: '글꼴은 Pretendard 하나입니다. 호스트명, IP, 수치 같은 서버가 말하는 값은 같은 글꼴에 tabular-nums(자릿수 폭 고정)를 켜서 표에서 세로로 맞습니다. 스케일은 12 / 13 / 14 / 16 / 20 / 24 / 32. 예외로 11px는 상태 라벨과 2단 셀의 보조줄(위치 id, CPU 모델), 단축키 표시에만 씁니다.',
         body: (
           <>
             <div className="grid gap-8 md:grid-cols-2">
@@ -492,7 +492,7 @@ export default function DesignSystem() {
     blocks: [
       {
         title: 'Panel vs Section',
-        note: 'Panel + PanelHeader / Section + SectionHeader. Panel은 제목줄이 있는 선 박스로, 표와 차트처럼 구조가 있는 데이터를 담습니다. Section은 박스 없이 페이지 위에 바로 놓이는 요약이나 목록입니다. 모든 영역이 같은 박스로 보이지 않게 해서 중요도를 나눕니다. 제목 밑에 설명 문장을 붙이지 않습니다. 제목이 이름이고, 범위나 단위처럼 꼭 필요한 값은 오른쪽 actions(기간 선택, 값)에 둡니다.',
+        note: 'Panel + PanelHeader / Section + SectionHeader. Panel은 제목줄이 있는 선 박스로, 표와 차트처럼 구조가 있는 데이터를 담습니다. Section은 박스 없이 페이지 위에 바로 놓이는 요약이나 목록입니다. 모든 영역이 같은 박스로 보이지 않게 해서 중요도를 나눕니다. 제목 밑에 설명 문장을 붙이지 않습니다. 제목이 이름이고, 범위나 단위처럼 꼭 필요한 값은 오른쪽 actions(기간 선택, 값)에 둡니다. 숫자의 기준처럼 오해할 수 있는 것만 PanelHeader의 info로 적고, 제목 옆 i 아이콘에 올리면 툴팁으로 나옵니다(Resource utilization, Locations).',
         body: (
           <>
             <div className="grid gap-5 lg:grid-cols-2">
@@ -519,7 +519,7 @@ export default function DesignSystem() {
       },
       {
         title: 'Locations',
-        note: 'Panel + 리전 헤더 + BrickGrid + Meter. 리전마다 벽돌로 서버 배치를, Meter로 CPU 평균을 보여줍니다.',
+        note: 'Panel + 위치 헤더 + BrickGrid + Meter. 위치마다 벽돌로 서버 배치를, Meter로 CPU 평균을 보여줍니다.',
         body: (
           <>
             <div className="xl:max-w-[360px]">
@@ -539,7 +539,7 @@ export default function DesignSystem() {
       },
       {
         title: 'Servers list',
-        note: '2행 툴바(1행: 검색 + Columns · 리전 · 보기 묶음 / 2행: 상태 칩 + GPU 칩) + DataGrid(cards, 셀 여백 12px, ⋯ 메뉴). IP는 호스트명 아래에 둡니다. 표가 놓인 영역이 좁아지면 Memory(1010px 미만), Location(910px 미만) 순으로 열이 자동으로 숨고(Columns 메뉴 상태와 별개), 830px 미만에서는 카드로 시작합니다. Servers 화면에서는 이 상태를 URL에 둡니다(?status, ?gpu, ?sort, ?view, ?page).',
+        note: '2행 툴바(1행: 검색 + Columns · 위치 · 보기 묶음 / 2행: 상태 칩 + GPU 칩) + DataGrid(cards, 셀 여백 12px, ⋯ 메뉴). IP는 호스트명 아래에 둡니다. 표가 놓인 영역이 좁아지면 Memory(1010px 미만), Location(910px 미만) 순으로 열이 자동으로 숨고(Columns 메뉴 상태와 별개), 830px 미만에서는 카드로 시작합니다. Servers 화면에서는 이 상태를 URL에 둡니다(?status, ?gpu, ?sort, ?view, ?page).',
         body: (
           <>
             <ServersListPattern />
@@ -557,7 +557,7 @@ export default function DesignSystem() {
       },
       {
         title: 'Timeline',
-        note: 'Section + 틴트 링 상태 아이콘 + 레일. 호스트명 / 설명 / 상태 · 리전 · 시간의 3줄.',
+        note: 'Section + 틴트 링 상태 아이콘 + 레일. 호스트명 / 설명 / 상태 · 위치 · 시간의 3줄.',
         body: (
           <>
             <div className="max-w-[360px]">

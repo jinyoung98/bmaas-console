@@ -38,7 +38,7 @@ export default function Overview() {
         <FleetStatus counts={counts} regionCount={regions.length} />
 
         <div className={ROW}>
-          <UtilizationPanel means={means} />
+          <UtilizationPanel means={means} note="전체 서버의 주요 리소스 사용률과 시간별 변화 추이" />
           <LocationsPanel groups={groups} />
         </div>
 

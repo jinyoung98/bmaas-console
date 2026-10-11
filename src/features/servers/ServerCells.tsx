@@ -6,7 +6,7 @@ import { StatusBadge } from '@/components/data/StatusDot'
 import { isLiveStatus } from '@/lib/status'
 import type { Server } from '@/mock/types'
 
-/** 2단 셀의 아랫줄. 리전 id, CPU 모델, IP처럼 윗줄을 보충하는 값 */
+/** 2단 셀의 아랫줄. 위치 id, CPU 모델, IP처럼 윗줄을 보충하는 값 */
 const sub = 'num block text-[11px] leading-4 text-ink-mute'
 
 type HostProps = { server: Server; withStatus?: boolean; withIp?: boolean }

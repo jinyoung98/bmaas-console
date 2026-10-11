@@ -66,7 +66,7 @@ const uncontrolledColumns = pickServerColumns(['hostname', 'status', 'location',
 
 /**
  * 비제어 사용 예. 상태를 들고 있지 않고 초기값만 준다. 정렬, 선택, 페이지, 열 표시는 DataGrid 안에서 관리된다.
- * 위의 리전 전환은 데이터를 줄였을 때의 보정(페이지는 마지막으로, 사라진 행은 선택에서 제외)을 보여주기 위한 것이다.
+ * 위의 위치 전환은 데이터를 줄였을 때의 보정(페이지는 마지막으로, 사라진 행은 선택에서 제외)을 보여주기 위한 것이다.
  */
 function Uncontrolled() {
   const [busanOnly, setBusanOnly] = useState<'all' | 'busan'>('all')

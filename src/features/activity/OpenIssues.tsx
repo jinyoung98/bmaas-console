@@ -18,8 +18,6 @@ type Props = {
 /** 이 건수 이하면 이슈 목록까지 펼치고, 넘으면 머리 한 줄로 접는다 */
 const EXPAND_MAX = 3
 
-const sinceText = (at: number) => relativeTime(at).replace(' 전', '째')
-
 /**
  * 표 위의 미해소 이슈 띠. Error가 있으면 머리 줄을 빨강으로 꽉 채우고(솔리드), Warning만 있으면 노랑 틴트로 한 단계 낮춘다.
  * 색의 세기가 심각도를 같이 말하고, 평소에는 이슈가 없어 띠 자체가 없다. 머리의 Error·Warning 개수는
@@ -90,7 +88,7 @@ export function OpenIssues({ issues, severity, onSeverity, onOpen }: Props) {
                 <StatusIcon status={e.severity} />
                 <span className="min-w-0 flex-1 text-[13px] leading-5">{e.text}</span>
                 <Mono className="hidden shrink-0 text-xs font-medium sm:inline">{e.hostname}</Mono>
-                <span className="num shrink-0 text-xs text-ink-mute">{sinceText(e.at)}</span>
+                <span className="num shrink-0 text-xs text-ink-mute">{relativeTime(e.at)}</span>
               </button>
             </li>
           ))}

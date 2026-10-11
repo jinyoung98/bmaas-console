@@ -13,6 +13,8 @@ type Props<K extends string> = {
   info?: Record<K, MetricInfo>
   getData?: (key: K, range: Range, index: number) => Point[]
   title?: string
+  /** 숫자의 기준 한 줄. 제목 옆 아이콘의 툴팁으로 보인다 */
+  note?: string
 }
 
 /** 네 지표를 카드로 나열하지 않고, 한 패널 안의 탭처럼 묶어서 하나의 차트를 바꿔 보여준다 */
@@ -22,6 +24,7 @@ export function UtilizationPanel<K extends string = 'cpu' | 'memory' | 'storage'
   info = METRICS as unknown as Record<K, MetricInfo>,
   getData = (m, range, i) => getSeries(m as never, range, means[m], i + 1),
   title = 'Resource utilization',
+  note,
 }: Props<K>) {
   const [metric, setMetric] = useState<K>(keys[0])
   const [range, setRange] = useState<Range>('24h')
@@ -36,6 +39,7 @@ export function UtilizationPanel<K extends string = 'cpu' | 'memory' | 'storage'
     <Panel className="flex flex-col">
       <PanelHeader
         title={title}
+        info={note}
         actions={<SegmentedControl value={range} onValueChange={setRange} options={[...RANGES]} />}
       />
 

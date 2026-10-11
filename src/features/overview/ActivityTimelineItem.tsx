@@ -16,7 +16,7 @@ type Props = {
 }
 
 /**
- * 타임라인 한 줄: 틴트 링 아이콘 + (호스트명) / 설명 / 상태 · 리전 · 시간. 세로 레일은 항목 사이를 잇는다.
+ * 타임라인 한 줄: 틴트 링 아이콘 + (호스트명) / 설명 / 상태 · 위치 · 시간. 세로 레일은 항목 사이를 잇는다.
  * 루트 폰트가 14px라 rem 기반 spacing으로는 아이콘 중심과 레일이 어긋난다. 그래서 치수는 px로 고정한다.
  */
 export function ActivityTimelineItem({ event: e, last, showHost = true, region }: Props) {

@@ -32,7 +32,7 @@ function formatSpan(ms: number) {
 function issueState(e: ActivityEvent): { open: boolean; text: string } | null {
   if (e.severity !== 'warning' && e.severity !== 'error') return null
   return e.resolvedAt === undefined
-    ? { open: true, text: `지금도 진행 중 · ${formatSpan(Date.now() - e.at)}째` }
+    ? { open: true, text: `진행 중 · ${formatSpan(Date.now() - e.at)} 경과` }
     : { open: false, text: `해소됨 · ${formatSpan(e.resolvedAt - e.at)} 지속` }
 }
 

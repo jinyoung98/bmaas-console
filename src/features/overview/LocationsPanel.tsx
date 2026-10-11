@@ -9,14 +9,16 @@ type Props = { groups: { region: Region; servers: Server[] }[] }
 /** 서버 8대 = 랙 1개. 서버 IP의 랙 번호(10.20.1.x, 10.20.2.x)와 같은 기준이다 */
 export const RACK_SIZE = 8
 
+const NOTE = '위치별 서버 상태 분포와 평균 CPU 사용률'
+
 /**
- * 리전별로 서버를 벽돌처럼 쌓아 보여준다. 한 리전은 세 줄로 읽힌다.
- * 1) 어느 리전이고 용량이 얼마인가  2) 서버가 어떻게 놓여 있는가(색 = 상태)  3) CPU는 얼마나 쓰는가
+ * 위치별로 서버를 벽돌처럼 쌓아 보여준다. 한 위치는 세 줄로 읽힌다.
+ * 1) 어느 위치이며 용량이 얼마인가  2) 서버가 어떻게 놓여 있는가(색 = 상태)  3) CPU는 얼마나 쓰는가
  */
 export function LocationsPanel({ groups }: Props) {
   return (
     <Panel className="flex flex-col">
-      <PanelHeader title="Locations" />
+      <PanelHeader title="Locations" info={NOTE} />
 
       <PanelBody className="flex-1 space-y-7 md:grid md:grid-cols-2 md:gap-x-10 md:gap-y-7 md:space-y-0 xl:block xl:space-y-7">
         {groups.map(({ region, servers }) => {

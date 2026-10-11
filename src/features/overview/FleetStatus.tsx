@@ -31,7 +31,7 @@ export function FleetStatus({ counts, regionCount }: Props) {
 
       <div className="mt-[16px] flex items-baseline gap-[10px]">
         <Value value={total} className="text-3xl font-semibold tracking-tight" />
-        <span className="text-sm text-ink-mute">servers · {regionCount}개 리전</span>
+        <span className="text-sm text-ink-mute">servers · {regionCount} locations</span>
       </div>
 
       <StackBar
