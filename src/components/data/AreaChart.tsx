@@ -31,8 +31,8 @@ export function AreaChart({ data, height, domain = [0, 100], unit, formatTick, f
         <RAreaChart data={data} margin={{ top: 8, right: 32, bottom: 0, left: -12 }}>
           <defs>
             <linearGradient id={id} x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0" stopColor="var(--accent)" stopOpacity={0.22} />
-              <stop offset="1" stopColor="var(--accent)" stopOpacity={0} />
+              <stop offset="0" stopColor="var(--data)" stopOpacity={0.22} />
+              <stop offset="1" stopColor="var(--data)" stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid vertical={false} stroke="var(--chart-grid)" />
@@ -77,11 +77,11 @@ export function AreaChart({ data, height, domain = [0, 100], unit, formatTick, f
           <Area
             type="monotone"
             dataKey="v"
-            stroke="var(--accent)"
+            stroke="var(--data)"
             strokeWidth={1.75}
             fill={`url(#${id})`}
             animationDuration={500}
-            activeDot={{ r: 4, fill: 'var(--accent)', stroke: 'var(--surface)', strokeWidth: 2 }}
+            activeDot={{ r: 4, fill: 'var(--data)', stroke: 'var(--surface)', strokeWidth: 2 }}
           />
         </RAreaChart>
       </ResponsiveContainer>

@@ -44,7 +44,7 @@ function specs(s: Server): [string, string][] {
 }
 
 /** 사용률 한 줄(축약형)의 색. Meter와 같은 임계값(75% warning, 90% error) */
-const usageTone = (v: number) => (v >= 90 ? 'text-st-error' : v >= 75 ? 'text-st-warning' : 'text-ink-mute')
+const usageTone = (v: number) => (v >= 90 ? 'text-st-error-strong' : v >= 75 ? 'text-st-warning-strong' : 'text-ink-mute')
 
 /**
  * 서버 한 대 = 카드 한 장(Grid 보기). 위에서 아래로 상태 → 이름 → 모델 → 핵심 스펙 → 사용률 → IP·월 비용.
@@ -107,7 +107,7 @@ export function ServerCard({ server: s, className }: { server: Server; className
           {live ? (
             <Mono className={cn('shrink-0 text-xs @[480px]:hidden', usageTone(s.usage.cpu))}>CPU {s.usage.cpu}%</Mono>
           ) : (
-            s.status === 'error' && <span className="shrink-0 text-xs text-st-error @[480px]:hidden">응답 없음</span>
+            s.status === 'error' && <span className="shrink-0 text-xs text-st-error-strong @[480px]:hidden">응답 없음</span>
           )}
         </div>
         <p className="hidden text-xs text-ink-mute @[480px]:block">
@@ -140,7 +140,7 @@ export function ServerCard({ server: s, className }: { server: Server; className
                 className={cn(
                   'rounded-sm border border-dashed px-[10px] py-[8px] text-xs',
                   s.status === 'error'
-                    ? 'border-st-error/40 bg-st-error/6 text-st-error'
+                    ? 'border-st-error/40 bg-st-error/6 text-st-error-strong'
                     : 'border-line-strong text-ink-mute',
                 )}
               >

@@ -11,7 +11,7 @@ type Props = {
 /** 사용률 막대. 평소엔 브랜드 그린, 임계값을 넘으면 상태 색으로 바뀐다 */
 export function Meter({ value, className, alert = true }: Props) {
   const v = Math.max(0, Math.min(100, value))
-  const tone = !alert ? 'bg-accent' : v >= 90 ? 'bg-st-error' : v >= 75 ? 'bg-st-warning' : 'bg-accent'
+  const tone = !alert ? 'bg-data' : v >= 90 ? 'bg-st-error' : v >= 75 ? 'bg-st-warning' : 'bg-data'
   return (
     <div
       role="meter"

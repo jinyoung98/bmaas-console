@@ -4,7 +4,7 @@ import { Mono, Value } from '@/components/data/Mono'
 import { StackBar } from '@/components/data/StackBar'
 import { Section, SectionHeader } from '@/components/layout/Section'
 import { Button } from '@/components/ui/Button'
-import { STATUS_BG, STATUS_LABEL, STATUS_ORDER, type ServerStatus } from '@/lib/status'
+import { STATUS_BG, STATUS_LABEL, STATUS_ORDER, STATUS_STRONG_BG, type ServerStatus } from '@/lib/status'
 
 type Props = { counts: Record<ServerStatus, number>; regionCount: number }
 
@@ -37,7 +37,7 @@ export function FleetStatus({ counts, regionCount }: Props) {
       <StackBar
         showValues
         className="mb-[14px] mt-[16px] h-[32px] gap-[3px]"
-        segments={STATUS_ORDER.map((s) => ({ key: s, label: STATUS_LABEL[s], value: counts[s], className: STATUS_BG[s] }))}
+        segments={STATUS_ORDER.map((s) => ({ key: s, label: STATUS_LABEL[s], value: counts[s], className: s === 'error' ? STATUS_STRONG_BG.error : STATUS_BG[s] }))}
       />
 
       <ul className="flex flex-wrap gap-[8px]">

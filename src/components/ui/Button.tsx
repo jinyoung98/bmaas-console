@@ -16,7 +16,7 @@ const button = cva(
         primary: 'border-accent bg-accent text-accent-ink hover:bg-accent/90',
         secondary: 'border-line-strong bg-raised text-ink hover:bg-accent-subtle',
         ghost: 'border-transparent text-ink-soft hover:bg-accent-subtle hover:text-ink',
-        danger: 'border-st-error/40 bg-raised text-st-error hover:bg-st-error/10',
+        danger: 'border-st-error/40 bg-raised text-st-error-strong hover:bg-st-error/10',
       },
       size: {
         sm: 'h-7 px-2.5 text-xs',

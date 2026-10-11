@@ -26,7 +26,7 @@ export function Sparkline({ data, width = 96, height = 28, className }: Props) {
   const area = `${line} L${width} ${height} L0 ${height} Z`
 
   return (
-    <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} className={cn('text-accent', className)} aria-hidden>
+    <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} className={cn('text-data', className)} aria-hidden>
       <defs>
         <linearGradient id={id} x1="0" x2="0" y1="0" y2="1">
           <stop offset="0" stopColor="currentColor" stopOpacity="0.22" />

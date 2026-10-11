@@ -47,7 +47,7 @@ export function MetricTabs<K extends string>({
             </span>
             <span className="mt-1 flex items-end justify-between gap-2">
               <Value value={means[m]} unit={info[m].unit} className="text-xl font-semibold tracking-tight" />
-              <Sparkline data={d.map((p) => p.v)} width={56} height={22} className={on ? 'text-accent' : 'text-ink-mute'} />
+              <Sparkline data={d.map((p) => p.v)} width={56} height={22} className={on ? 'text-data' : 'text-ink-mute'} />
             </span>
             <span className="num mt-1 flex items-center gap-0.5 text-xs text-ink-mute">
               {change >= 0 ? <ArrowUpRight className="size-3" /> : <ArrowDownRight className="size-3" />}

@@ -32,7 +32,7 @@ import { FleetStatus } from '@/features/overview/FleetStatus'
 import { LocationsPanel, RACK_SIZE } from '@/features/overview/LocationsPanel'
 import { RecentServers } from '@/features/overview/RecentServers'
 import { cn } from '@/lib/cn'
-import { STATUS_BG, STATUS_LABEL, STATUS_ORDER } from '@/lib/status'
+import { STATUS_BG, STATUS_LABEL, STATUS_ORDER, STATUS_STRONG_BG } from '@/lib/status'
 import { activity } from '@/mock/activity'
 import { regions } from '@/mock/regions'
 import { groupByRegion, recentlyUpdated, statusCounts } from '@/mock/selectors'
@@ -68,7 +68,7 @@ const legendBricks = STATUS_ORDER.flatMap((status, i) => {
   const s = servers.find((x) => x.status === status)
   return s ? [{ id: s.id, label: s.hostname, status, to: `/servers/${s.id}`, rack: 1, unit: i + 1 }] : []
 })
-const stackSegments = STATUS_ORDER.map((s) => ({ key: s, label: STATUS_LABEL[s], value: counts[s], className: STATUS_BG[s] }))
+const stackSegments = STATUS_ORDER.map((s) => ({ key: s, label: STATUS_LABEL[s], value: counts[s], className: s === 'error' ? STATUS_STRONG_BG.error : STATUS_BG[s] }))
 
 const trend = [32, 36, 34, 41, 39, 47, 52, 49, 58, 55, 63, 61, 68, 64, 72]
 
@@ -134,7 +134,7 @@ export default function DesignSystem() {
     blocks: [
       {
         title: 'Color & surface',
-        note: '기본색은 초록이 아니라 먹색(ink)입니다. 초록은 로고(brand)와 Running 상태에만 나오고, Available은 파랑입니다. bg → surface → raised 순으로 한 단계씩 올라오며, 구분은 그림자가 아니라 1px 선이 합니다. 그림자는 떠 있는 레이어(툴팁·팝오버·메뉴)에만 예외로 씁니다.',
+        note: '바탕과 글자는 먹색(ink)이고, 버튼·링크·탭·선택의 포인트(accent)는 kiln.bricksum.com과 같은 청록(라이트 #0D6E67, 다크 #2DD4BF)입니다. 사용률 막대와 차트 선(data)은 상태색의 초록·파랑과 섞이지 않게 먹색으로 둡니다. 로고(brand)는 초록입니다. bg → surface → raised 순으로 한 단계씩 올라오며, 구분은 그림자가 아니라 1px 선이 합니다. 그림자는 떠 있는 레이어(툴팁·팝오버·메뉴)에만 예외로 씁니다.',
         body: (
           <>
             <div className="flex flex-wrap gap-3">
@@ -150,13 +150,14 @@ export default function DesignSystem() {
       },
       {
         title: 'Status',
-        note: '브랜드 그린과 겹치지 않도록 Running은 더 밝은 그린을 씁니다. 상태색은 점, 배지, 벽돌, 구성비 막대, 칩 스와치, 타임라인 아이콘과 상태 라벨에만 씁니다.',
+        note: 'Running은 브릭섬 로고 쪽 초록, Available은 파랑, Maintenance는 슬레이트, Warning은 밝은 노랑, Error는 선명한 빨강입니다. 정상 쪽(Running · Available · Maintenance)은 가라앉히고 이상 쪽(Warning · Error)만 선명하게 둡니다. 윗줄은 면(점, 벽돌, 막대, 칩 스와치)에 쓰는 색이고, 아랫줄 strong은 같은 상태를 글자와 솔리드 띠로 쓸 때의 더 어두운 값입니다(다크에서는 같은 값). 상태색은 점, 배지, 벽돌, 구성비 막대, 칩 스와치, 타임라인 아이콘과 상태 라벨에만 씁니다.',
         body: (
           <>
             <div className="flex flex-wrap gap-3">
               {STATUS_ORDER.map((s) => (
                 <div key={s} className="w-28">
-                  <div className={`${STATUS_BG[s]} h-14 rounded-md`} />
+                  <div className={`${STATUS_BG[s]} h-14 rounded-t-md`} />
+                  <div className={`${STATUS_STRONG_BG[s]} h-6 rounded-b-md`} />
                   <Mono className="mt-1.5 block text-xs text-ink-soft">st-{s}</Mono>
                 </div>
               ))}
@@ -338,7 +339,7 @@ export default function DesignSystem() {
       },
       {
         title: 'Meter',
-        note: '사용률 막대. 평소 먹색(accent)이고 75%를 넘으면 warning, 90%를 넘으면 error 색으로 바뀝니다. alert를 끄면 값과 상관없이 먹색입니다.',
+        note: '사용률 막대. 평소 먹색(data)이고 75%를 넘으면 warning, 90%를 넘으면 error 색으로 바뀝니다. alert를 끄면 값과 상관없이 먹색입니다.',
         body: (
           <>
             <div className="max-w-md space-y-3">

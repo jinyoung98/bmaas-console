@@ -52,7 +52,7 @@ function Interfaces({ server: s }: { server: Server }) {
                   <Mono>{r.network}</Mono>
                 </td>
                 <td className={td}>
-                  <span className={cn('inline-flex items-center gap-[6px]', r.up ? 'text-ink' : 'text-st-error')}>
+                  <span className={cn('inline-flex items-center gap-[6px]', r.up ? 'text-ink' : 'text-st-error-strong')}>
                     <span className={cn('size-[6px] rounded-full', r.up ? 'bg-st-running' : 'bg-st-error')} />
                     {r.up ? 'Up' : 'Down'}
                   </span>

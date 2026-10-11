@@ -29,21 +29,30 @@ export const STATUS_BG: Record<ServerStatus, string> = {
   error: 'bg-st-error',
 }
 
+/** 면과 같은 상태의 더 어두운 값(strong)을 칠하는 클래스. 구성비의 Error 칸과 이슈 띠의 솔리드 머리처럼 글자 수준의 대비가 필요한 면에 쓴다 */
+export const STATUS_STRONG_BG: Record<ServerStatus, string> = {
+  running: 'bg-st-running-strong',
+  available: 'bg-st-available-strong',
+  maintenance: 'bg-st-maintenance-strong',
+  warning: 'bg-st-warning-strong',
+  error: 'bg-st-error-strong',
+}
+
 export const STATUS_TEXT: Record<ServerStatus, string> = {
-  running: 'text-st-running',
-  available: 'text-st-available',
-  maintenance: 'text-st-maintenance',
-  warning: 'text-st-warning',
-  error: 'text-st-error',
+  running: 'text-st-running-strong',
+  available: 'text-st-available-strong',
+  maintenance: 'text-st-maintenance-strong',
+  warning: 'text-st-warning-strong',
+  error: 'text-st-error-strong',
 }
 
 /** 배지 배경은 상태색 12%, 글자는 상태색. 테두리 없이 틴트만으로 구분한다 */
 export const STATUS_BADGE: Record<ServerStatus, string> = {
-  running: 'bg-st-running/12 text-st-running',
-  available: 'bg-st-available/12 text-st-available',
-  maintenance: 'bg-st-maintenance/12 text-st-maintenance',
-  warning: 'bg-st-warning/12 text-st-warning',
-  error: 'bg-st-error/12 text-st-error',
+  running: 'bg-st-running/12 text-st-running-strong',
+  available: 'bg-st-available/12 text-st-available-strong',
+  maintenance: 'bg-st-maintenance/12 text-st-maintenance-strong',
+  warning: 'bg-st-warning/12 text-st-warning-strong',
+  error: 'bg-st-error/12 text-st-error-strong',
 }
 
 /** 헤더 아래 알림 줄이 필요한 상태 */

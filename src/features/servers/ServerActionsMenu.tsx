@@ -49,7 +49,7 @@ export function ServerActionsMenu({ server, className }: { server: Server; class
         ))}
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          className="text-st-error data-[highlighted]:bg-st-error/10 [&_svg]:!text-st-error"
+          className="text-st-error-strong data-[highlighted]:bg-st-error/10 [&_svg]:!text-st-error-strong"
           onSelect={() => toast(`${server.hostname} 서버 해제를 요청했습니다`)}
         >
           <Trash2 />

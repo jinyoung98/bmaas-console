@@ -36,14 +36,14 @@ export function OpenIssues({ issues, severity, onSeverity, onOpen }: Props) {
       aria-label="조치가 필요한 이슈"
       className={cn(
         'overflow-hidden rounded-md border',
-        solid ? 'border-st-error bg-surface' : 'border-st-warning/40 border-l-[4px] border-l-st-warning bg-st-warning/8',
+        solid ? 'border-st-error-strong bg-surface' : 'border-st-warning/40 border-l-[4px] border-l-st-warning bg-st-warning/8',
       )}
     >
       <div
         className={cn(
           'flex flex-wrap items-center gap-x-[12px] gap-y-[6px] px-[14px]',
           // 솔리드 빨강 위 글자: 라이트는 흰색, 다크는 밝은 빨강이라 어두운 글자
-          solid ? 'bg-st-error py-[10px] text-white dark:text-[#1a0b0b]' : 'py-[12px]',
+          solid ? 'bg-st-error-strong py-[10px] text-white dark:text-[#1a0b0b]' : 'py-[12px]',
         )}
       >
         {solid ? <TriangleAlert className="size-[16px] shrink-0" aria-hidden /> : <StatusIcon status="warning" />}

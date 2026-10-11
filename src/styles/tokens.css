@@ -19,22 +19,34 @@
   --line: rgb(26 86 50 / 0.14);
   --line-strong: rgb(26 86 50 / 0.28);
 
-  /* accent: 버튼, 선택, 차트 선, 막대의 기본 색. 초록이 아니라 먹색이다 */
-  --accent: #12271a;
-  --accent-ink: #f0f3ef;
+  /* accent: 버튼, 선택, 차트 선, 막대의 기본 색. kiln.bricksum.com의 포인트색인 청록 */
+  --accent: #0d6e67;
+  --accent-ink: #ffffff;
   --accent-subtle: rgb(18 39 26 / 0.07);
 
-  /* brand: 로고에만 쓴다. 초록은 이 로고와 Running 상태 외에는 나오지 않는다 */
+  /* brand: 로고에만 쓴다 */
   --brand: #1a5632;
 
-  /* status: 점, 배지, 벽돌, 구성비 막대, 칩 스와치, 타임라인 아이콘과 상태 라벨에만 쓴다. 이 다섯 개 외에는 만들지 않는다 */
-  --st-running: #17a06c;
-  --st-available: #2c6dec;
-  --st-warning: #c98a14;
-  --st-error: #d04545;
-  --st-maintenance: #7c6bd6;
+  /*
+   * status: 점, 배지, 벽돌, 칩 스와치, 타임라인 아이콘과 상태 라벨에만 쓴다. 상태는 다섯 개뿐이다.
+   * 면(--st-*)은 채우는 색이고, strong(--st-*-strong)은 같은 상태를 글자와 솔리드 띠로 쓸 때의 더 어두운 값이다.
+   * 라이트에서는 밝은 면(특히 Warning의 노랑)이 글자로 읽히지 않아서 둘로 나눴고, 다크에서는 같은 값이다.
+   */
+  --st-running: #247448;
+  --st-available: #2b7ad6;
+  --st-warning: #e7ac2a;
+  --st-error: #e6443d;
+  --st-maintenance: #aab3b7;
+  --st-running-strong: #247448;
+  --st-available-strong: #1467c2;
+  --st-warning-strong: #845a0f;
+  --st-error-strong: #d03833;
+  --st-maintenance-strong: #5a6872;
 
   --chart-grid: rgb(26 86 50 / 0.1);
+
+  /* data: 사용률 막대, 차트 선, 스파크라인의 색. 청록 포인트는 버튼, 링크, 탭, 선택에만 쓰고 데이터는 먹색으로 둔다. 상태색(Running 초록 등)과 섞이지 않게 하려는 것 */
+  --data: var(--ink);
 }
 
 .dark {
@@ -50,17 +62,22 @@
   --line: rgb(120 200 150 / 0.12);
   --line-strong: rgb(120 200 150 / 0.26);
 
-  --accent: #e8eee9;
-  --accent-ink: #0b110d;
+  --accent: #2dd4bf;
+  --accent-ink: #090c0c;
   --accent-subtle: rgb(232 238 233 / 0.1);
 
   --brand: #34a863;
 
-  --st-running: #36d9a2;
-  --st-available: #5595ff;
-  --st-warning: #e6b04a;
+  --st-running: #4bde81;
+  --st-available: #75aef5;
+  --st-warning: #e0b05c;
   --st-error: #f07171;
-  --st-maintenance: #a193f0;
+  --st-maintenance: #9aa8b2;
+  --st-running-strong: #4bde81;
+  --st-available-strong: #75aef5;
+  --st-warning-strong: #e0b05c;
+  --st-error-strong: #f07171;
+  --st-maintenance-strong: #9aa8b2;
 
   --chart-grid: rgb(120 200 150 / 0.1);
 }
@@ -79,6 +96,7 @@
   --color-accent: var(--accent);
   --color-accent-ink: var(--accent-ink);
   --color-accent-subtle: var(--accent-subtle);
+  --color-data: var(--data);
   --color-brand: var(--brand);
 
   --color-st-running: var(--st-running);
@@ -86,6 +104,11 @@
   --color-st-warning: var(--st-warning);
   --color-st-error: var(--st-error);
   --color-st-maintenance: var(--st-maintenance);
+  --color-st-running-strong: var(--st-running-strong);
+  --color-st-available-strong: var(--st-available-strong);
+  --color-st-warning-strong: var(--st-warning-strong);
+  --color-st-error-strong: var(--st-error-strong);
+  --color-st-maintenance-strong: var(--st-maintenance-strong);
 
   --font-sans: 'Pretendard Variable', Pretendard, system-ui, sans-serif;
   --font-brand: 'Amaranth', var(--font-sans);
