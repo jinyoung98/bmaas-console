@@ -562,7 +562,7 @@ export default function DesignSystem() {
       },
       {
         title: 'Locations',
-        note: 'Panel + 위치 헤더 + BrickGrid + Meter. 위치마다 벽돌로 서버 배치를, Meter로 CPU 평균을 보여줍니다.',
+        note: 'Overview의 주인공 패널. 위치마다 머리(Running 비율 · 상태 구성비 막대 · 상태별 개수)와 서버 보기가 이어집니다. 상태 이름은 Fleet status와 같은 말을 쓰고 Warning과 Error는 나눠 적습니다. Arrange가 랙(기본)이면 서버가 늘 같은 랙 · 같은 칸에 있어서 정렬하지 않고, 세로(기본) / 가로는 제목줄 토글로 바꿉니다. 세로는 한 위치에 랙이 최대 4개라고 보고 폭을 4등분하며 가득 차지 않은 랙의 남는 칸은 점선입니다. 이름 · 상태를 누르면 랙을 풀고 위치별 칩(틴트 바탕 · 테두리 + 상태색 원 + 호스트명)으로 정렬해 보여주므로 정렬이 랙 안의 자리를 바꾸지 않습니다. 상태순은 Error → Warning → Maintenance → Available → Running 입니다. 패널 폭에 따라 위치가 1열 → 2열 → 4열로 놓입니다.',
         body: (
           <>
             <div className="xl:max-w-[360px]">

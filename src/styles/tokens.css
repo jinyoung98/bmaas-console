@@ -42,6 +42,12 @@
   --st-warning-strong: #845a0f;
   --st-error-strong: #d03833;
   --st-maintenance-strong: #5a6872;
+  /* 상태색 면 위에 올리는 글자색(벽돌 안 번호) */
+  --st-running-on: #ffffff;
+  --st-available-on: #ffffff;
+  --st-maintenance-on: #12271a;
+  --st-warning-on: #3a2a05;
+  --st-error-on: #ffffff;
 
   --chart-grid: rgb(26 86 50 / 0.1);
 
@@ -78,6 +84,11 @@
   --st-warning-strong: #e0b05c;
   --st-error-strong: #f07171;
   --st-maintenance-strong: #9aa8b2;
+  --st-running-on: #06210f;
+  --st-available-on: #071a33;
+  --st-maintenance-on: #0b110d;
+  --st-warning-on: #2a1d03;
+  --st-error-on: #2b0808;
 
   --chart-grid: rgb(120 200 150 / 0.1);
 }
@@ -109,6 +120,11 @@
   --color-st-warning-strong: var(--st-warning-strong);
   --color-st-error-strong: var(--st-error-strong);
   --color-st-maintenance-strong: var(--st-maintenance-strong);
+  --color-st-running-on: var(--st-running-on);
+  --color-st-available-on: var(--st-available-on);
+  --color-st-maintenance-on: var(--st-maintenance-on);
+  --color-st-warning-on: var(--st-warning-on);
+  --color-st-error-on: var(--st-error-on);
 
   --font-sans: 'Pretendard Variable', Pretendard, system-ui, sans-serif;
   --font-brand: 'Amaranth', var(--font-sans);

@@ -17,6 +17,11 @@ type Props<K extends string> = {
   note?: string
 }
 
+/** 패널이 좁으면(Overview의 오른쪽 열) 2×2, 넓으면 한 줄. 칸 사이 선은 가운데 십자로만 그린다 */
+const tabsClass =
+  'grid-cols-2 divide-x-0 divide-y-0 [&>*:nth-child(even)]:border-l [&>*:nth-child(n+3)]:border-t ' +
+  '@[560px]:grid-cols-4 @[560px]:[&>*:nth-child(n+2)]:border-l @[560px]:[&>*:nth-child(n+3)]:border-t-0'
+
 /** 네 지표를 카드로 나열하지 않고, 한 패널 안의 탭처럼 묶어서 하나의 차트를 바꿔 보여준다 */
 export function UtilizationPanel<K extends string = 'cpu' | 'memory' | 'storage' | 'network'>({
   means,
@@ -36,14 +41,22 @@ export function UtilizationPanel<K extends string = 'cpu' | 'memory' | 'storage'
   const isPercent = info[metric].percent
 
   return (
-    <Panel className="flex flex-col">
+    <Panel className="flex flex-col @container">
       <PanelHeader
         title={title}
         info={note}
         actions={<SegmentedControl value={range} onValueChange={setRange} options={[...RANGES]} />}
       />
 
-      <MetricTabs keys={keys} info={info} means={means} series={series} active={metric} onSelect={setMetric} />
+      <MetricTabs
+        keys={keys}
+        info={info}
+        means={means}
+        series={series}
+        active={metric}
+        onSelect={setMetric}
+        className={tabsClass}
+      />
 
       {/* 옆 패널(Locations)이 더 길면 차트가 그만큼 늘어나서 두 패널의 바닥이 맞는다 */}
       <div className="relative min-h-[300px] flex-1">

@@ -29,6 +29,15 @@ export const STATUS_BG: Record<ServerStatus, string> = {
   error: 'bg-st-error',
 }
 
+/** 칩 바탕과 테두리. 상태색을 옅게 물들인다(점 · 글자는 따로). 회색(Maintenance)은 옅어서 조금 더 진하게 올린다 */
+export const STATUS_TINT: Record<ServerStatus, string> = {
+  running: 'bg-st-running/14 border-st-running/45',
+  available: 'bg-st-available/14 border-st-available/45',
+  maintenance: 'bg-st-maintenance/22 border-st-maintenance/60',
+  warning: 'bg-st-warning/20 border-st-warning/60',
+  error: 'bg-st-error/16 border-st-error/55',
+}
+
 /** 면과 같은 상태의 더 어두운 값(strong)을 칠하는 클래스. 구성비의 Error 칸과 이슈 띠의 솔리드 머리처럼 글자 수준의 대비가 필요한 면에 쓴다 */
 export const STATUS_STRONG_BG: Record<ServerStatus, string> = {
   running: 'bg-st-running-strong',
@@ -36,6 +45,15 @@ export const STATUS_STRONG_BG: Record<ServerStatus, string> = {
   maintenance: 'bg-st-maintenance-strong',
   warning: 'bg-st-warning-strong',
   error: 'bg-st-error-strong',
+}
+
+/** 상태색 면 위에 올리는 글자(벽돌 안 번호). 면과 같은 상태의 짝으로 대비가 맞춰져 있다 */
+export const STATUS_ON: Record<ServerStatus, string> = {
+  running: 'text-st-running-on',
+  available: 'text-st-available-on',
+  maintenance: 'text-st-maintenance-on',
+  warning: 'text-st-warning-on',
+  error: 'text-st-error-on',
 }
 
 export const STATUS_TEXT: Record<ServerStatus, string> = {
