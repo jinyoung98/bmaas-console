@@ -96,7 +96,7 @@ const IP_BASE: Record<RegionId, number> = { 'kr-seoul-1': 20, 'kr-gwangju-1': 30
 /** 운영 중인 서비스처럼 보이도록 몇 대에 이야기를 심어 둔다 */
 const STATUS_OVERRIDE: Record<string, ServerStatus> = {
   'bm-seoul-03': 'warning',
-  'bm-gwangju-07': 'warning',
+  'bm-tokyo-07': 'warning',
   'bm-tokyo-04': 'error',
   'bm-busan-05': 'maintenance',
   'bm-gwangju-12': 'maintenance',

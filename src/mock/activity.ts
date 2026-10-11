@@ -17,7 +17,7 @@ const head: ActivityEvent[] = [
   { id: 'a4', severity: 'available', hostname: 'bm-seoul-14', text: '서버가 해제되어 사용 가능 상태가 되었습니다', at: min(180), actor: user(1) },
   { id: 'a5', severity: 'maintenance', hostname: 'bm-gwangju-12', text: '펌웨어 업데이트를 위해 점검 모드로 전환되었습니다', at: min(300), actor: provider },
   { id: 'a6', severity: 'running', hostname: 'bm-gwangju-03', text: '재부팅이 완료되었습니다', at: min(480), actor: user(2) },
-  { id: 'a7', severity: 'warning', hostname: 'bm-gwangju-07', text: 'NVMe 드라이브 수명이 15% 남았습니다', at: min(60 * 26), actor: system },
+  { id: 'a7', severity: 'warning', hostname: 'bm-tokyo-07', text: 'NVMe 드라이브 수명이 15% 남았습니다', at: min(60 * 26), actor: system },
   { id: 'a8', severity: 'running', hostname: 'bm-seoul-08', text: 'Ubuntu 24.04 LTS로 OS가 재설치되었습니다', at: min(60 * 30), actor: user(0) },
   { id: 'a9', severity: 'maintenance', hostname: 'bm-busan-05', text: '네트워크 장비 교체를 위해 점검 모드로 전환되었습니다', at: min(60 * 52), actor: provider },
   { id: 'a10', severity: 'available', hostname: 'bm-seoul-15', text: '서버가 해제되어 사용 가능 상태가 되었습니다', at: min(60 * 70), actor: user(1) },
