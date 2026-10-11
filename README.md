@@ -28,8 +28,8 @@ npm run lint       # oxlint
 
 ```bash
 # 1. 이미지 빌드 후 노드의 containerd에 불러오기
-docker build -t bmaas-console:0.1 .
-docker save bmaas-console:0.1 | sudo ctr -n k8s.io images import -
+docker build -t bmaas-console:0.2 .
+docker save bmaas-console:0.2 | sudo ctr -n k8s.io images import -
 
 # 2. 배포 (Service는 NodePort 30080)
 kubectl apply -f k8s/app.yaml

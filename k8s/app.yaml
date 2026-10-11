@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: bmaas-console:0.1
+          image: bmaas-console:0.2
           # 레지스트리 없이 노드의 containerd에 직접 불러온 이미지를 쓰므로 IfNotPresent
           imagePullPolicy: IfNotPresent
           ports:
